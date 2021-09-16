@@ -1,6 +1,6 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { Qualification } from '@/entities';
-import { createEntity, findEntityOrThrow, updateEntity, getData } from '@/util/typeorm';
+import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity } from '@/util/typeorm';
 import { QualificationResponseType } from '../SharedTypes';
 import { QualificationType } from './QualificationTypes';
 
@@ -24,6 +24,15 @@ export class QualificationResolver {
     @Mutation(() => QualificationResponseType)
     async updateQualification(@Arg('qualificationId') id: number, @Arg('data') data: QualificationType): Promise<QualificationResponseType> {
         return updateEntity(Qualification, id, data);
+    }
+
+    @Mutation(() => Qualification)
+    async deleteQualification(
+        @Arg('teacherId') teacherId: number,
+        @Arg('qualificationId') qualificationId: number,
+    ): Promise<Qualification | undefined> {
+        await findEntityOrThrow(Qualification, undefined, { where: { id: qualificationId, teacher: { id: teacherId } } });
+        return removeEntity(Qualification, qualificationId);
     }
 
     @Query(() => Qualification)

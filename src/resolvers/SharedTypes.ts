@@ -1,4 +1,4 @@
-import { Qualification, Teacher, User } from '@/entities';
+import { Qualification, Teacher, User, Experience } from '@/entities';
 import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType()
@@ -34,4 +34,13 @@ export class QualificationResponseType {
 
     @Field(() => Qualification, { nullable: true })
     entity?: Qualification;
+}
+
+@ObjectType()
+export class ExperienceResponseType {
+    @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
+
+    @Field(() => Experience, { nullable: true })
+    entity?: Experience;
 }
