@@ -26,7 +26,7 @@ export class Teacher extends BaseEntity {
 
     @Field()
     @PrimaryGeneratedColumn()
-    id: string;
+    id: number;
 
     @Field()
     @Column({ type: 'text' })
