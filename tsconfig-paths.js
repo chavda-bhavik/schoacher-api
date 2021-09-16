@@ -7,6 +7,6 @@ const tsConfig = require('./tsconfig.json');
 // tsconfig-paths to do that job when we run our production start script.
 // https://github.com/microsoft/TypeScript/issues/10866
 tsConfigPaths.register({
-  baseUrl: tsConfig.compilerOptions.outDir,
-  paths: tsConfig.compilerOptions.paths,
+    baseUrl: tsConfig.compilerOptions.outDir,
+    paths: tsConfig.compilerOptions.paths,
 });

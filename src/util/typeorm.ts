@@ -2,23 +2,20 @@ import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { getConnection } from 'typeorm';
 import { ValidationError } from 'yup';
 
-import { User } from '@/entities/User';
+import { User, Teacher } from '@/entities';
 import { FieldError } from '@/resolvers/SharedTypes';
 
-type EntityConstructor = typeof User;
-type EntityInstance = User;
+type EntityConstructor = typeof User | typeof Teacher;
+type EntityInstance = User | Teacher;
 
-const entities: { [key: string]: EntityConstructor } = { User };
+const entities: { [key: string]: EntityConstructor } = { User, Teacher };
 
 export const getData = async <T extends EntityConstructor>(
     Constructor: T,
     userId?: number | string,
     orderBy?: 'ASC' | 'DESC' | undefined,
 ): Promise<InstanceType<T>[]> => {
-    let query = await getConnection()
-        .createQueryBuilder()
-        .select('entities')
-        .from(Constructor, 'entities');
+    let query = await getConnection().createQueryBuilder().select('entities').from(Constructor, 'entities');
 
     if (userId) {
         query.where('"entities"."userId" = :userId', { userId });
@@ -33,19 +30,23 @@ export const getData = async <T extends EntityConstructor>(
 
 export const findEntityOrThrow = async <T extends EntityConstructor>(
     Constructor: T,
-    id: number | string,
+    id?: number | string,
     options?: FindOneOptions,
+    throwError = true,
 ): Promise<InstanceType<T>> => {
-    const instance = await Constructor.findOne(id, options);
-    if (!instance) {
+    let instance;
+    if (id) {
+        instance = await Constructor.findOne(id, options);
+    } else {
+        instance = await Constructor.find(options);
+    }
+    if (!instance && throwError) {
         throw new Error(`${Constructor.name} Not Found`);
     }
     return instance;
 };
 
-export const validateAndSaveEntity = async <T extends EntityInstance>(
-    instance: T,
-): Promise<{ entity?: T; errors?: FieldError[] }> => {
+export const validateAndSaveEntity = async <T extends EntityInstance>(instance: T): Promise<{ entity?: T; errors?: FieldError[] }> => {
     const Constructor = entities[instance.constructor.name];
 
     if ('validations' in Constructor) {
@@ -60,29 +61,18 @@ export const validateAndSaveEntity = async <T extends EntityInstance>(
     };
 };
 
-export const createEntity = async <T extends EntityConstructor>(
-    Constructor: T,
-    input: Partial<InstanceType<T>>,
-) => {
+export const createEntity = async <T extends EntityConstructor>(Constructor: T, input: Partial<InstanceType<T>>) => {
     const instance = Constructor.create(input);
     return validateAndSaveEntity(instance as InstanceType<T>);
 };
 
-export const updateEntity = async <T extends EntityConstructor>(
-    Constructor: T,
-    id: number | string,
-    input: Partial<InstanceType<T>>,
-) => {
+export const updateEntity = async <T extends EntityConstructor>(Constructor: T, id: number | string, input: Partial<InstanceType<T>>) => {
     const instance = await findEntityOrThrow(Constructor, id);
     Object.assign(instance, input);
     return validateAndSaveEntity(instance);
 };
 
-export const removeEntity = async <T extends EntityConstructor>(
-    Constructor: T,
-    id: number | string,
-    hard?: boolean,
-): Promise<InstanceType<T>> => {
+export const removeEntity = async <T extends EntityConstructor>(Constructor: T, id: number | string, hard?: boolean): Promise<InstanceType<T>> => {
     const instance = await findEntityOrThrow(Constructor, id);
     if (hard) await instance.remove();
     else await instance.softRemove();

@@ -1,8 +1,5 @@
-import { User } from '@/entities/User';
+import { Teacher, User } from '@/entities';
 import { Field, ObjectType } from 'type-graphql';
-
-// type EntityInstance = User;
-// type EntityConstructor = typeof User;
 
 @ObjectType()
 export class FieldError {
@@ -19,4 +16,13 @@ export class ResponseType {
 
     @Field(() => User, { nullable: true })
     entity?: User;
+}
+
+@ObjectType()
+export class TeacherResponseType {
+    @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
+
+    @Field(() => Teacher, { nullable: true })
+    entity?: Teacher;
 }
