@@ -1,5 +1,17 @@
-import { Qualification, Teacher, User, Experience } from '@/entities';
-import { Field, ObjectType } from 'type-graphql';
+import { Qualification, Teacher, User, Experience, Subject, Board, Standard } from '@/entities';
+import { Field, InputType, ObjectType } from 'type-graphql';
+
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+@InputType()
+export class SubStdBoardType {
+    @Field()
+    boardId: number;
+    @Field()
+    subjectId: number;
+    @Field()
+    standardId: number;
+}
 
 @ObjectType()
 export class FieldError {
@@ -43,4 +55,31 @@ export class ExperienceResponseType {
 
     @Field(() => Experience, { nullable: true })
     entity?: Experience;
+}
+
+@ObjectType()
+export class SubjectResponseType {
+    @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
+
+    @Field(() => Subject, { nullable: true })
+    entity?: Subject;
+}
+
+@ObjectType()
+export class BoardResponseType {
+    @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
+
+    @Field(() => Board, { nullable: true })
+    entity?: Board;
+}
+
+@ObjectType()
+export class StandardResponseType {
+    @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
+
+    @Field(() => Standard, { nullable: true })
+    entity?: Standard;
 }

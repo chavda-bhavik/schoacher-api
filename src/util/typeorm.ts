@@ -1,13 +1,22 @@
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { ValidationError } from 'yup';
 
-import { User, Teacher, Qualification, Experience } from '@/entities';
+import { User, Teacher, Qualification, Experience, SubStdBoard, Board, Standard, Subject } from '@/entities';
 import { FieldError } from '@/resolvers/SharedTypes';
+import { RemoveOptions } from 'typeorm';
 
-type EntityConstructor = typeof User | typeof Teacher | typeof Qualification | typeof Experience;
-type EntityInstance = User | Teacher | Qualification | Experience;
+type EntityConstructor =
+    | typeof User
+    | typeof Teacher
+    | typeof Qualification
+    | typeof Experience
+    | typeof Subject
+    | typeof Standard
+    | typeof Board
+    | typeof SubStdBoard;
+type EntityInstance = User | Teacher | Qualification | Experience | SubStdBoard | Board | Standard | Subject;
 
-const entities: { [key: string]: EntityConstructor } = { User, Teacher, Qualification, Experience };
+const entities: { [key: string]: EntityConstructor } = { User, Teacher, Qualification, Experience, Subject, Standard, Board, SubStdBoard };
 
 export const getData = async <T extends EntityConstructor>(Constructor: T, options?: FindOneOptions): Promise<InstanceType<T>[]> => {
     let data = await Constructor.find(options);
@@ -58,9 +67,14 @@ export const updateEntity = async <T extends EntityConstructor>(Constructor: T, 
     return validateAndSaveEntity(instance);
 };
 
-export const removeEntity = async <T extends EntityConstructor>(Constructor: T, id: number | string, hard?: boolean): Promise<InstanceType<T>> => {
-    const instance = await findEntityOrThrow(Constructor, id);
-    if (hard) await instance.remove();
+export const removeEntity = async <T extends EntityConstructor>(
+    Constructor: T,
+    id?: number | string,
+    findOptions?: RemoveOptions,
+    hard?: boolean,
+): Promise<InstanceType<T>> => {
+    const instance = await findEntityOrThrow(Constructor, id, findOptions);
+    if (hard || !('deleted' in Constructor)) await instance.remove();
     else await instance.softRemove();
     return instance;
 };

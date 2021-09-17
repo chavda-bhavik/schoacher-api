@@ -4,7 +4,7 @@ import { createEntity, findEntityOrThrow, updateEntity } from '@/util/typeorm';
 import { TeacherResponseType } from '../SharedTypes';
 import { RegisterTeacherType, UpdateTeacherType } from './TeacherTypes';
 
-@Resolver()
+@Resolver(Teacher)
 export class TeacherResolver {
     @Mutation(() => TeacherResponseType)
     async registerTeacher(@Arg('data') data: RegisterTeacherType): Promise<TeacherResponseType> {

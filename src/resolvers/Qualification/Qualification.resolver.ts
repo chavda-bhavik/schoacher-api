@@ -4,7 +4,7 @@ import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity } 
 import { QualificationResponseType } from '../SharedTypes';
 import { QualificationType } from './QualificationTypes';
 
-@Resolver()
+@Resolver(Qualification)
 export class QualificationResolver {
     @Mutation(() => QualificationResponseType)
     async addQualification(@Arg('teacherId') teacherId: number, @Arg('data') data: QualificationType): Promise<QualificationResponseType> {

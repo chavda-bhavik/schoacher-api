@@ -9,7 +9,7 @@
         "watch": "tsc -w && tspath",
         "dev": "nodemon -r ./tsconfig-paths.js dist/index.js",
         "start": "node -r ./tsconfig-paths.js dist/index.js",
-        "start2": "ts-node src/index.ts"
+        "start2": "ts-node -r ./tsconfig-paths.js src/index.ts"
     },
     "repository": {
         "type": "git",
