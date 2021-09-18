@@ -64,6 +64,11 @@ export class Teacher extends BaseEntity {
     @Column({ type: 'text', unique: true })
     email: string;
 
+    @Field()
+    @Column({ nullable: false, default: "https://res.cloudinary.com/dkuoqamig/image/upload/v1631936323/pxxydj4zsfuqez71im2i.jpg" })
+    photoUrl: string;
+
+
     @CreateDateColumn()
     created!: Date;
 
