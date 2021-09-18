@@ -1,30 +1,27 @@
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
-import { getConnection } from 'typeorm';
 import { ValidationError } from 'yup';
+import { getConnection } from 'typeorm';
 
-import { User, Teacher } from '@/entities';
-import { FieldError } from '@/resolvers/SharedTypes';
+import { User, Teacher, Qualification, Experience, SubStdBoard, Board, Standard, Subject, Material } from '@/entities';
+import { FieldError, SubStdBoardType } from '@/resolvers/SharedTypes';
 
-type EntityConstructor = typeof User | typeof Teacher;
-type EntityInstance = User | Teacher;
+type EntityConstructor =
+    | typeof User
+    | typeof Teacher
+    | typeof Qualification
+    | typeof Experience
+    | typeof Subject
+    | typeof Standard
+    | typeof Board
+    | typeof SubStdBoard
+    | typeof Material;
+type EntityInstance = User | Teacher | Qualification | Experience | SubStdBoard | Board | Standard | Subject | Material;
+type SubjectsEntityInstance = Experience | Material;
 
-const entities: { [key: string]: EntityConstructor } = { User, Teacher };
+const entities: { [key: string]: EntityConstructor } = { User, Teacher, Qualification, Experience, Subject, Standard, Board, SubStdBoard, Material };
 
-export const getData = async <T extends EntityConstructor>(
-    Constructor: T,
-    userId?: number | string,
-    orderBy?: 'ASC' | 'DESC' | undefined,
-): Promise<InstanceType<T>[]> => {
-    let query = await getConnection().createQueryBuilder().select('entities').from(Constructor, 'entities');
-
-    if (userId) {
-        query.where('"entities"."userId" = :userId', { userId });
-    }
-
-    if (orderBy) {
-        query.orderBy('"entities"."date"', orderBy);
-    }
-    let data = await query.getMany();
+export const getData = async <T extends EntityConstructor>(Constructor: T, options?: FindOneOptions): Promise<InstanceType<T>[]> => {
+    let data = await Constructor.find(options);
     return data as InstanceType<T>[];
 };
 
@@ -38,7 +35,7 @@ export const findEntityOrThrow = async <T extends EntityConstructor>(
     if (id) {
         instance = await Constructor.findOne(id, options);
     } else {
-        instance = await Constructor.find(options);
+        instance = await Constructor.findOne(options);
     }
     if (!instance && throwError) {
         throw new Error(`${Constructor.name} Not Found`);
@@ -72,9 +69,14 @@ export const updateEntity = async <T extends EntityConstructor>(Constructor: T, 
     return validateAndSaveEntity(instance);
 };
 
-export const removeEntity = async <T extends EntityConstructor>(Constructor: T, id: number | string, hard?: boolean): Promise<InstanceType<T>> => {
-    const instance = await findEntityOrThrow(Constructor, id);
-    if (hard) await instance.remove();
+export const removeEntity = async <T extends EntityConstructor>(
+    Constructor: T,
+    id?: number | string,
+    findOptions?: FindOneOptions,
+    hard?: boolean,
+): Promise<InstanceType<T>> => {
+    const instance = await findEntityOrThrow(Constructor, id, findOptions);
+    if (hard || !('deleted' in Constructor)) await instance.remove();
     else await instance.softRemove();
     return instance;
 };
@@ -89,4 +91,35 @@ export const formatYupError = (err: ValidationError) => {
     });
 
     return errors;
+};
+
+export const saveSubjects = async (
+    entity: SubjectsEntityInstance,
+    subjectsFieldName: 'material_id' | 'experience_id',
+    fieldValue: string | number,
+    subjects: SubStdBoardType[]
+): Promise<SubjectsEntityInstance> => {
+    // delete subjects of entity
+    await getConnection().createQueryBuilder().delete().from(SubStdBoard).where(`"${subjectsFieldName}" = :id1`, { id1: fieldValue }).execute();
+
+    // add subjects to entity
+    let subjectsSet = new Set();
+    let newSubjects = subjects.reduce((subjectsArr: SubStdBoard[], sub) => {
+        // checking uniqueNess of subjects, if subject is exists in set do not add it
+        if (!subjectsSet.has(`${sub.boardId}${sub.standardId}${sub.subjectId}`)) {
+            let newSubStdBoard = new SubStdBoard();
+            newSubStdBoard.subject = { id: sub.subjectId };
+            newSubStdBoard.standard = { id: sub.standardId };
+            newSubStdBoard.board = { id: sub.boardId };
+            subjectsArr.push(newSubStdBoard);
+            subjectsSet.add(`${sub.boardId}${sub.standardId}${sub.subjectId}`);
+        }
+        return subjectsArr;
+    }, []);
+    entity.subjects = newSubjects;
+
+    // save entity
+    await entity.save();
+
+    return entity;
 };

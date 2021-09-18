@@ -9,7 +9,7 @@
         "watch": "tsc -w && tspath",
         "dev": "nodemon -r ./tsconfig-paths.js dist/index.js",
         "start": "node -r ./tsconfig-paths.js dist/index.js",
-        "start2": "ts-node src/index.ts"
+        "start2": "ts-node -r ./tsconfig-paths.js src/index.ts"
     },
     "repository": {
         "type": "git",
@@ -19,6 +19,7 @@
     "dependencies": {
         "apollo-server-express": "^3.3.0",
         "class-validator": "^0.13.1",
+        "cloudinary": "^1.27.0",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",

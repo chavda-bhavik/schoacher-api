@@ -3,8 +3,9 @@ import { Teacher } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity } from '@/util/typeorm';
 import { TeacherResponseType } from '../SharedTypes';
 import { RegisterTeacherType, UpdateTeacherType } from './TeacherTypes';
+import { uploadFile } from '@/util/upload';
 
-@Resolver()
+@Resolver(Teacher)
 export class TeacherResolver {
     @Mutation(() => TeacherResponseType)
     async registerTeacher(@Arg('data') data: RegisterTeacherType): Promise<TeacherResponseType> {
@@ -20,6 +21,12 @@ export class TeacherResolver {
 
     @Mutation(() => TeacherResponseType)
     async updateTeacherInfo(@Arg('id') id: number, @Arg('data') data: UpdateTeacherType): Promise<TeacherResponseType> {
-        return updateEntity(Teacher, id, data);
+        let photoUrl = null
+        if (data.photo) {
+            photoUrl = await uploadFile(data.photo)
+        }
+        let teacherData: Partial<Teacher> = data;
+        if (photoUrl) teacherData.photoUrl = photoUrl;
+        return updateEntity(Teacher, id, teacherData);
     }
 }
