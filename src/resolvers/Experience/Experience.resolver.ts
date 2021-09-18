@@ -1,9 +1,8 @@
 import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
 import { Experience, SubStdBoard } from '@/entities';
-import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity } from '@/util/typeorm';
+import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity, saveSubjects } from '@/util/typeorm';
 import { ExperienceResponseType, SubStdBoardType } from '../SharedTypes';
 import { ExperienceType } from './ExperienceTypes';
-import { getConnection } from 'typeorm';
 
 @Resolver(Experience)
 export class ExperienceResolver {
@@ -23,14 +22,7 @@ export class ExperienceResolver {
             teacher: { id: teacherId },
         });
         if (experience.entity && subjects) {
-            experience.entity.subjects = subjects.map((sub) => {
-                let newSubStdBoard = new SubStdBoard();
-                newSubStdBoard.subject = { id: sub.subjectId };
-                newSubStdBoard.standard = { id: sub.standardId };
-                newSubStdBoard.board = { id: sub.boardId };
-                return newSubStdBoard;
-            });
-            experience.entity.save();
+            await saveSubjects(experience.entity, "experience_id", experience.entity.id, subjects);
         }
         return experience;
     }
@@ -49,15 +41,7 @@ export class ExperienceResolver {
     ): Promise<ExperienceResponseType> {
         let experience = await updateEntity(Experience, id, data);
         if (experience.entity && subjects) {
-            await getConnection().createQueryBuilder().delete().from(SubStdBoard).where('"experience_id" = :id1', { id1: id }).execute();
-            experience.entity.subjects = subjects.map((sub) => {
-                let newSubStdBoard = new SubStdBoard();
-                newSubStdBoard.subject = { id: sub.subjectId };
-                newSubStdBoard.standard = { id: sub.standardId };
-                newSubStdBoard.board = { id: sub.boardId };
-                return newSubStdBoard;
-            });
-            experience.entity.save();
+            await saveSubjects(experience.entity, "experience_id", experience.entity.id, subjects);
         }
         return experience;
     }

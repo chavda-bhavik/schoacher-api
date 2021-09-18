@@ -1,9 +1,9 @@
 import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { ValidationError } from 'yup';
+import { getConnection } from 'typeorm';
 
-import { User, Teacher, Qualification, Experience, SubStdBoard, Board, Standard, Subject } from '@/entities';
-import { FieldError } from '@/resolvers/SharedTypes';
-import { RemoveOptions } from 'typeorm';
+import { User, Teacher, Qualification, Experience, SubStdBoard, Board, Standard, Subject, Material } from '@/entities';
+import { FieldError, SubStdBoardType } from '@/resolvers/SharedTypes';
 
 type EntityConstructor =
     | typeof User
@@ -13,10 +13,12 @@ type EntityConstructor =
     | typeof Subject
     | typeof Standard
     | typeof Board
-    | typeof SubStdBoard;
-type EntityInstance = User | Teacher | Qualification | Experience | SubStdBoard | Board | Standard | Subject;
+    | typeof SubStdBoard
+    | typeof Material;
+type EntityInstance = User | Teacher | Qualification | Experience | SubStdBoard | Board | Standard | Subject | Material;
+type SubjectsEntityInstance = Experience | Material;
 
-const entities: { [key: string]: EntityConstructor } = { User, Teacher, Qualification, Experience, Subject, Standard, Board, SubStdBoard };
+const entities: { [key: string]: EntityConstructor } = { User, Teacher, Qualification, Experience, Subject, Standard, Board, SubStdBoard, Material };
 
 export const getData = async <T extends EntityConstructor>(Constructor: T, options?: FindOneOptions): Promise<InstanceType<T>[]> => {
     let data = await Constructor.find(options);
@@ -70,7 +72,7 @@ export const updateEntity = async <T extends EntityConstructor>(Constructor: T, 
 export const removeEntity = async <T extends EntityConstructor>(
     Constructor: T,
     id?: number | string,
-    findOptions?: RemoveOptions,
+    findOptions?: FindOneOptions,
     hard?: boolean,
 ): Promise<InstanceType<T>> => {
     const instance = await findEntityOrThrow(Constructor, id, findOptions);
@@ -89,4 +91,35 @@ export const formatYupError = (err: ValidationError) => {
     });
 
     return errors;
+};
+
+export const saveSubjects = async (
+    entity: SubjectsEntityInstance,
+    subjectsFieldName: 'material_id' | 'experience_id',
+    fieldValue: string | number,
+    subjects: SubStdBoardType[]
+): Promise<SubjectsEntityInstance> => {
+    // delete subjects of entity
+    await getConnection().createQueryBuilder().delete().from(SubStdBoard).where(`"${subjectsFieldName}" = :id1`, { id1: fieldValue }).execute();
+
+    // add subjects to entity
+    let subjectsSet = new Set();
+    let newSubjects = subjects.reduce((subjectsArr: SubStdBoard[], sub) => {
+        // checking uniqueNess of subjects, if subject is exists in set do not add it
+        if (!subjectsSet.has(`${sub.boardId}${sub.standardId}${sub.subjectId}`)) {
+            let newSubStdBoard = new SubStdBoard();
+            newSubStdBoard.subject = { id: sub.subjectId };
+            newSubStdBoard.standard = { id: sub.standardId };
+            newSubStdBoard.board = { id: sub.boardId };
+            subjectsArr.push(newSubStdBoard);
+            subjectsSet.add(`${sub.boardId}${sub.standardId}${sub.subjectId}`);
+        }
+        return subjectsArr;
+    }, []);
+    entity.subjects = newSubjects;
+
+    // save entity
+    await entity.save();
+
+    return entity;
 };

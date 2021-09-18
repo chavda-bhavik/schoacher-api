@@ -5,7 +5,6 @@ import {
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
-    DeleteDateColumn,
     ManyToOne,
     JoinColumn,
     Column,
@@ -14,6 +13,7 @@ import { Subject } from './Subject';
 import { Board } from './Board';
 import { Standard } from './Standard';
 import { Experience } from '.';
+import { Material } from './Material';
 
 @ObjectType()
 @Entity()
@@ -47,6 +47,13 @@ export class SubStdBoard extends BaseEntity {
     @JoinColumn({ name: 'experience_id' })
     experience: Partial<Experience>;
 
+    @ManyToOne(() => Material, (mat) => mat.subjects)
+    @JoinColumn({ name: 'material_id' })
+    material: Partial<Material>;
+
+    @Column({ nullable: true })
+    material_id: number;
+
     @Column({ nullable: true })
     experience_id: number;
 
@@ -55,7 +62,4 @@ export class SubStdBoard extends BaseEntity {
 
     @UpdateDateColumn()
     updated!: Date;
-
-    @DeleteDateColumn()
-    deleted!: Date;
 }
