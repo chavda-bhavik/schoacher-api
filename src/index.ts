@@ -5,9 +5,11 @@ import cors from 'cors';
 import { createConnection, getConnectionOptions } from 'typeorm';
 import { createSchema } from './util/createSchema';
 import { __prod__ } from './constants';
-// import { graphqlUploadExpress } from "graphql-upload";
+import { graphqlUploadExpress } from "graphql-upload";
+import dotenv from 'dotenv';
 
 const main = async () => {
+    dotenv.config();
     const PORT = process.env.PORT || 4000;
     const options = await getConnectionOptions(process.env.NODE_ENV || 'development');
 
@@ -26,11 +28,10 @@ const main = async () => {
         context: ({ req, res }) => ({
             req,
             res,
-        }),
-        // uploads: false
+        })
     });
     await apolloServer.start();
-    // app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
+    app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
     apolloServer.applyMiddleware({
         app,
         cors: false,

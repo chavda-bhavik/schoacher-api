@@ -38,6 +38,10 @@ export class Material extends BaseEntity {
     @Column({ nullable: true, type: 'text' })
     description: string;
 
+    @Field()
+    @Column({ type: 'text' })
+    fileUrl: string;
+
     @CreateDateColumn()
     created!: Date;
 
