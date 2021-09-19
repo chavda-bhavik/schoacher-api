@@ -1,10 +1,11 @@
+import bcrypt from 'bcryptjs';
 import { Arg, Mutation, Query, Resolver, FieldResolver, Root } from 'type-graphql';
+
 import { Employer, Teacher, SubStdBoard } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity, saveSubjects, getData } from '@/util/typeorm';
 import { EmployerResponseType, FieldError, SubStdBoardType } from '../SharedTypes';
 import { RegisterEmployerType, UpdateEmployerType } from './EmployerTypes';
 import { uploadFile } from '@/util/upload';
-import bcrypt from 'bcryptjs';
 import { RegularExpresssions } from '@/constants';
 
 @Resolver(Employer)

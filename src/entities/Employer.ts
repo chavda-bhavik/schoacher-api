@@ -3,6 +3,7 @@ import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import * as Yup from 'yup';
 import { SubStdBoard } from '.';
+import { EmployerTypeEnum } from '../constants';
 
 @ObjectType()
 @Entity()
@@ -24,6 +25,14 @@ export class Employer extends BaseEntity {
     @Field()
     @Column({ type: 'text' })
     name: string;
+
+    @Field()
+    @Column({
+        type: 'enum',
+        enum: EmployerTypeEnum,
+        default: EmployerTypeEnum.SCHOOL,
+    })
+    type: EmployerTypeEnum;
 
     @Column({ nullable: true, type: 'text' })
     password: string;

@@ -11,6 +11,9 @@ export class RegisterTeacherType {
 
     @Field()
     email: string;
+
+    @Field()
+    password: string;
 }
 
 @InputType()

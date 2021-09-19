@@ -12,12 +12,7 @@ import {
 } from 'typeorm';
 import { Teacher } from '.';
 import { SubStdBoard } from './SubStdBoard';
-
-export enum ExperienceTypeEnum {
-    SCHOOL = 'school',
-    TUTION = 'tution',
-    HOMEBATCH = 'home batch',
-}
+import { EmployerTypeEnum } from '../constants'
 
 @ObjectType()
 @Entity()
@@ -48,10 +43,10 @@ export class Experience extends BaseEntity {
     @Field()
     @Column({
         type: 'enum',
-        enum: ExperienceTypeEnum,
-        default: ExperienceTypeEnum.SCHOOL,
+        enum: EmployerTypeEnum,
+        default: EmployerTypeEnum.SCHOOL,
     })
-    type: ExperienceTypeEnum;
+    type: EmployerTypeEnum;
 
     @OneToMany(() => SubStdBoard, (sub) => sub.experience, {
         cascade: true,

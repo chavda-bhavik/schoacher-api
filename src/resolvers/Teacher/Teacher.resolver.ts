@@ -1,4 +1,6 @@
+import bcrypt from 'bcryptjs';
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+
 import { Employer, Teacher } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity } from '@/util/typeorm';
 import { FieldError, TeacherResponseType } from '../SharedTypes';
@@ -27,6 +29,7 @@ export class TeacherResolver {
         }
         if (error) return { errors: [error] }
         // save teacher
+        data.password = bcrypt.hashSync(data.password);
         let teacher = createEntity(Teacher, data);
         return teacher;
     }
