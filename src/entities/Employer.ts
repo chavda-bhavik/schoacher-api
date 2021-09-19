@@ -1,21 +1,21 @@
 import { RegularExpresssions } from '@/constants';
 import { Field, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import * as Yup from 'yup';
+import { SubStdBoard } from '.';
+import { EmployerTypeEnum } from '../constants';
 
 @ObjectType()
 @Entity()
-export class Teacher extends BaseEntity {
+export class Employer extends BaseEntity {
     static validations = Yup.object().shape({
-        firstName: Yup.string().required().max(100),
-        lastName: Yup.string().required().max(100),
+        name: Yup.string().required().max(200),
         mobile1: Yup.string()
             .nullable()
             .test('valid', 'Mobile Number is not valid', (val) => (val ? RegularExpresssions.mobile.test(val) : true)),
         mobile2: Yup.string()
             .nullable()
-            .test('valid', 'Mobile Number is not valid', (val) => (val ? RegularExpresssions.mobile.test(val) : true)),
-        gender: Yup.number().test('valid', 'Gender is Not Valid', (val) => (val ? [0, 1].includes(val) : true))
+            .test('valid', 'Mobile Number is not valid', (val) => (val ? RegularExpresssions.mobile.test(val) : true))
     });
 
     @Field()
@@ -24,13 +24,16 @@ export class Teacher extends BaseEntity {
 
     @Field()
     @Column({ type: 'text' })
-    firstName: string;
+    name: string;
 
     @Field()
-    @Column({ type: 'text' })
-    lastName: string;
+    @Column({
+        type: 'enum',
+        enum: EmployerTypeEnum,
+        default: EmployerTypeEnum.SCHOOL,
+    })
+    type: EmployerTypeEnum;
 
-    @Field()
     @Column({ nullable: true, type: 'text' })
     password: string;
 
@@ -42,25 +45,24 @@ export class Teacher extends BaseEntity {
     @Column({ nullable: true, type: 'text' })
     mobile2: string;
 
-    @Field({ nullable: true })
-    @Column({ nullable: true, type: 'text' })
-    headline: string;
-
-    @Field({ nullable: true })
-    @Column({ nullable: true, type: 'text' })
-    address: string;
-
-    @Field()
-    @Column({ default: 1, type: 'numeric' })
-    gender: Number;
-
     @Field()
     @Column({ type: 'text', unique: true })
     email: string;
 
-    @Field()
-    @Column({ nullable: false, default: "https://res.cloudinary.com/dkuoqamig/image/upload/v1631936323/pxxydj4zsfuqez71im2i.jpg" })
+    @Field({ nullable: true })
+    @Column({ nullable: true, type: 'text' })
+    about: string;
+
+    @Field({ nullable: true })
+    @Column({ nullable: true })
     photoUrl: string;
+
+    @OneToMany(() => SubStdBoard, (sub) => sub.employer, {
+        cascade: true,
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+    })
+    subjects?: SubStdBoard[];
 
     @CreateDateColumn()
     created!: Date;

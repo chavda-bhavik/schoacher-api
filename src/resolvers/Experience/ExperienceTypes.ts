@@ -1,9 +1,9 @@
 import { InputType, Field, registerEnumType } from 'type-graphql';
-import { ExperienceTypeEnum } from '@/entities/Experience';
+import { EmployerTypeEnum } from '@/constants';
 
-registerEnumType(ExperienceTypeEnum, {
-    name: 'ExperienceTypeEnum', // this one is mandatory
-    description: 'Enum describing Experience Type', // this one is optional
+registerEnumType(EmployerTypeEnum, {
+    name: 'EmployerTypeEnum',
+    description: 'Enum describing Employer Type'
 });
 
 @InputType()
@@ -26,6 +26,6 @@ export class ExperienceType {
     @Field({ nullable: true })
     description?: string;
 
-    @Field(() => ExperienceTypeEnum, { nullable: true })
-    type?: ExperienceTypeEnum;
+    @Field(() => EmployerTypeEnum, { nullable: true })
+    type?: EmployerTypeEnum;
 }
