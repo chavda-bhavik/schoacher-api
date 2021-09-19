@@ -15,13 +15,7 @@ export class Teacher extends BaseEntity {
         mobile2: Yup.string()
             .nullable()
             .test('valid', 'Mobile Number is not valid', (val) => (val ? RegularExpresssions.mobile.test(val) : true)),
-        gender: Yup.number().test('valid', 'Gender is Not Valid', (val) => (val ? [0, 1].includes(val) : true)),
-        email: Yup.string()
-            .max(200)
-            .test('valid', 'Email is not valid', (val) => !!val && RegularExpresssions.email.test(val))
-            .test('unique', 'Email is already registered', async (val) => {
-                return !!val && !Boolean(await Teacher.count({ where: { email: val } }));
-            }),
+        gender: Yup.number().test('valid', 'Gender is Not Valid', (val) => (val ? [0, 1].includes(val) : true))
     });
 
     @Field()

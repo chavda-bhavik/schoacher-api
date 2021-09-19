@@ -7,3 +7,4 @@ export { User } from './User';
 export { Qualification } from './Qualification';
 export { Experience } from './Experience';
 export { Material } from './Material';
+export { Employer } from './Employer';

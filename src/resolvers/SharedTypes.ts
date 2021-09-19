@@ -1,4 +1,4 @@
-import { Qualification, Teacher, User, Experience, Subject, Board, Standard, Material } from '@/entities';
+import { Qualification, Teacher, User, Experience, Subject, Board, Standard, Material, Employer } from '@/entities';
 import { Field, InputType, ObjectType } from 'type-graphql';
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
@@ -91,4 +91,13 @@ export class MaterialResponseType {
 
     @Field(() => Material, { nullable: true })
     entity?: Material;
+}
+
+@ObjectType()
+export class EmployerResponseType {
+    @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
+
+    @Field(() => Employer, { nullable: true })
+    entity?: Employer;
 }
