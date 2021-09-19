@@ -62,7 +62,7 @@ export class EmployerResolver {
         let employer = await updateEntity(Employer, id, employerData);
         // adding subjects to employer if available
         if (employer.entity && subjects) {
-            await saveSubjects(employer.entity, "experience_id", employer.entity.id, subjects);
+            await saveSubjects(employer.entity, "employer_id", employer.entity.id, subjects);
         }
         return employer;
     }

@@ -9,7 +9,7 @@ import {
     JoinColumn,
     Column,
 } from 'typeorm';
-import { Experience, Employer, Standard, Board, Subject, Material } from '.';
+import { Experience, Employer, Standard, Board, Subject, Material, Requirement } from '.';
 
 @ObjectType()
 @Entity()
@@ -59,6 +59,13 @@ export class SubStdBoard extends BaseEntity {
 
     @Column({ nullable: true })
     employer_id: number;
+
+    @ManyToOne(() => Requirement, (mat) => mat.subjects)
+    @JoinColumn({ name: 'requirement_id' })
+    requirement: Partial<Employer>;
+
+    @Column({ nullable: true })
+    requirement_id: number;
 
     @CreateDateColumn()
     created!: Date;

@@ -8,3 +8,4 @@ export { SubjectResolver } from './Subject/Subject.resolver';
 export { SubStdBoardResolver } from './SubStdBoard/SubStdBoard.resolver';
 export { MaterialResolver } from './Material/Material.resolver';
 export { EmployerResolver } from './Employer/Employer.resolver';
+export { RequirementResolver } from './Requirement/Requirement.resolver';
