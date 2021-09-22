@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
 
-import { Employer, Teacher } from '@/entities';
-import { createEntity, findEntityOrThrow, updateEntity } from '@/util/typeorm';
+import { Employer, Experience, Material, Qualification, Teacher } from '@/entities';
+import { createEntity, findEntityOrThrow, getData, updateEntity } from '@/util/typeorm';
 import { FieldError, TeacherResponseType } from '../SharedTypes';
 import { RegisterTeacherType, UpdateTeacherType } from './TeacherTypes';
 import { uploadFile } from '@/util/upload';
@@ -10,24 +10,39 @@ import { RegularExpresssions } from '@/constants';
 
 @Resolver(Teacher)
 export class TeacherResolver {
+    @FieldResolver(() => [Experience])
+    experiences(@Root() teacher: Teacher) {
+        return getData(Experience, { where: { teacherId: teacher.id } });
+    }
+
+    @FieldResolver(() => [Qualification])
+    qualifications(@Root() teacher: Teacher) {
+        return getData(Qualification, { where: { teacherId: teacher.id } });
+    }
+
+    @FieldResolver(() => [Material])
+    materials(@Root() teacher: Teacher) {
+        return getData(Material, { where: { teacherId: teacher.id } });
+    }
+
     @Mutation(() => TeacherResponseType)
     async registerTeacher(@Arg('data') data: RegisterTeacherType): Promise<TeacherResponseType> {
         let error: FieldError | undefined;
         if (!RegularExpresssions.email.test(data.email))
             error = {
-                message: "Email is not valid",
-                field: "email"
-            }
+                message: 'Email is not valid',
+                field: 'email',
+            };
         else {
             let teachers = await Teacher.count({ where: { email: data.email } });
             let employers = await Employer.count({ where: { email: data.email } });
             if (teachers > 0 || employers > 0)
                 error = {
-                    message: "Email is already registered",
-                    field: "email"
-                }
+                    message: 'Email is already registered',
+                    field: 'email',
+                };
         }
-        if (error) return { errors: [error] }
+        if (error) return { errors: [error] };
         // save teacher
         data.password = bcrypt.hashSync(data.password);
         let teacher = createEntity(Teacher, data);
@@ -42,9 +57,9 @@ export class TeacherResolver {
 
     @Mutation(() => TeacherResponseType)
     async updateTeacherInfo(@Arg('id') id: number, @Arg('data') data: UpdateTeacherType): Promise<TeacherResponseType> {
-        let photoUrl = null
+        let photoUrl = null;
         if (data.photo) {
-            photoUrl = await uploadFile(data.photo)
+            photoUrl = await uploadFile(data.photo);
         }
         let teacherData: Partial<Teacher> = data;
         if (photoUrl) teacherData.photoUrl = photoUrl;

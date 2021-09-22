@@ -12,6 +12,9 @@ export class Qualification extends BaseEntity {
     @ManyToOne(() => Teacher, { onDelete: 'CASCADE' })
     teacher: Partial<Teacher>;
 
+    @Column()
+    teacherId: number;
+
     @Field()
     @Column({ type: 'date' })
     start: string;

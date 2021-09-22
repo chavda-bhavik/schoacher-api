@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { Teacher } from '.';
 import { SubStdBoard } from './SubStdBoard';
-import { EmployerTypeEnum } from '../constants'
+import { EmployerTypeEnum } from '../constants';
 
 @ObjectType()
 @Entity()
@@ -23,6 +23,9 @@ export class Experience extends BaseEntity {
 
     @ManyToOne(() => Teacher, { onDelete: 'CASCADE' })
     teacher: Partial<Teacher>;
+
+    @Column()
+    teacherId: number;
 
     @Field()
     @Column({ type: 'date' })

@@ -23,6 +23,9 @@ export class Material extends BaseEntity {
     @ManyToOne(() => Teacher, { onDelete: 'CASCADE' })
     teacher: Partial<Teacher>;
 
+    @Column()
+    teacherId: number;
+
     @Field()
     @Column()
     title: string;
