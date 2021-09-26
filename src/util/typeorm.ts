@@ -21,7 +21,19 @@ type EntityConstructor =
 type EntityInstance = User | Teacher | Qualification | Experience | SubStdBoard | Board | Standard | Subject | Material | Employer | Requirement;
 type SubjectsEntityInstance = Experience | Material | Employer | Requirement;
 
-const entities: { [key: string]: EntityConstructor } = { User, Teacher, Qualification, Experience, Subject, Standard, Board, SubStdBoard, Material, Employer, Requirement };
+const entities: { [key: string]: EntityConstructor } = {
+    User,
+    Teacher,
+    Qualification,
+    Experience,
+    Subject,
+    Standard,
+    Board,
+    SubStdBoard,
+    Material,
+    Employer,
+    Requirement,
+};
 
 export const getData = async <T extends EntityConstructor>(Constructor: T, options?: FindOneOptions): Promise<InstanceType<T>[]> => {
     let data = await Constructor.find(options);
@@ -79,9 +91,10 @@ export const removeEntity = async <T extends EntityConstructor>(
     hard?: boolean,
 ): Promise<InstanceType<T>> => {
     const instance = await findEntityOrThrow(Constructor, id, findOptions);
+    let instanceCopy = Object.assign({}, instance);
     if (hard || !('deleted' in Constructor)) await instance.remove();
     else await instance.softRemove();
-    return instance;
+    return instanceCopy;
 };
 
 export const formatYupError = (err: ValidationError) => {
@@ -100,7 +113,7 @@ export const saveSubjects = async (
     entity: SubjectsEntityInstance,
     subjectsFieldName: 'material_id' | 'experience_id' | 'requirement_id' | 'employer_id',
     fieldValue: string | number,
-    subjects: SubStdBoardType[]
+    subjects: SubStdBoardType[],
 ): Promise<SubjectsEntityInstance> => {
     // delete subjects of entity
     await getConnection().createQueryBuilder().delete().from(SubStdBoard).where(`"${subjectsFieldName}" = :id1`, { id1: fieldValue }).execute();

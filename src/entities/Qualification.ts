@@ -1,10 +1,19 @@
 import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import * as Yup from 'yup';
+
 import { Teacher } from '.';
 
 @ObjectType()
 @Entity()
 export class Qualification extends BaseEntity {
+    static validations = Yup.object().shape({
+        degree: Yup.string().required(),
+        college: Yup.string().required(),
+        start: Yup.date().required(),
+        end: Yup.date().required(),
+    });
+
     @Field()
     @PrimaryGeneratedColumn()
     id: number;
