@@ -1,13 +1,15 @@
-import { FileUpload } from "graphql-upload";
-import { v2 } from "cloudinary";
+import { FileUpload } from 'graphql-upload';
+import { v2 } from 'cloudinary';
+import { RegularExpresssions } from '@/constants';
 
 export const uploadFile = async (file: FileUpload): Promise<string> => {
     const { createReadStream } = await file;
+
     v2.config({
         cloud_name: process.env.cloud_name,
         api_key: process.env.api_key,
         api_secret: process.env.api_secret,
-        secure: true
+        secure: true,
     });
 
     const url: string = await new Promise((resolve, reject) => {
@@ -19,18 +21,19 @@ export const uploadFile = async (file: FileUpload): Promise<string> => {
                         // width: '300',
                         // height: '350',
                         // dpr: 'auto',
-                        gravity: "auto",
+                        gravity: 'auto',
                         // crop: "fill_pad",
-                        quality: "auto",
+                        quality: 'auto',
                     },
                     function (err, image: any) {
                         if (err) {
                             return reject(err.message);
                         }
                         resolve(image.url);
-                    }
-                )
-            ).on('error', reject);
+                    },
+                ),
+            )
+            .on('error', reject);
 
         // store image in file
         // const destinationPath = path.join(__dirname, '/../../images/', filename)
@@ -51,10 +54,25 @@ export const uploadFile = async (file: FileUpload): Promise<string> => {
         //     //     res('your image url..')
         //     // })
         // })
-    })
+    });
 
     return url;
-}
+};
+
+export const deleteFile = async (url: string) => {
+    let matchArr = RegularExpresssions.cloudinaryPublicId.exec(url);
+    if (matchArr && matchArr[1]) {
+        v2.config({
+            cloud_name: process.env.cloud_name,
+            api_key: process.env.api_key,
+            api_secret: process.env.api_secret,
+            secure: true,
+        });
+        let response = await v2.uploader.destroy(matchArr[1]);
+        console.log(response);
+        if (!(response && response.result === 'ok')) throw new Error('Image is not deleted');
+    }
+};
 
 // const storeUpload = async (upload: any): Promise<FileField> => {
 //     const { createReadStream } = upload;
