@@ -40,10 +40,6 @@ export class Experience extends BaseEntity {
     title: string;
 
     @Field()
-    @Column({ type: 'text' })
-    instituteName: string;
-
-    @Field()
     @Column({
         type: 'enum',
         enum: EmployerTypeEnum,
@@ -65,6 +61,10 @@ export class Experience extends BaseEntity {
     @Field({ nullable: true })
     @Column({ nullable: true, type: 'text' })
     description: string;
+
+    @Field({ nullable: true })
+    @Column({ nullable: true, type: 'text' })
+    employerName: string;
 
     @CreateDateColumn()
     created!: Date;

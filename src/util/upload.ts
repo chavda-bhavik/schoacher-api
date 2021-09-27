@@ -69,7 +69,6 @@ export const deleteFile = async (url: string) => {
             secure: true,
         });
         let response = await v2.uploader.destroy(matchArr[1]);
-        console.log(response);
         if (!(response && response.result === 'ok')) throw new Error('Image is not deleted');
     }
 };
