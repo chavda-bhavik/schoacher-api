@@ -6,9 +6,9 @@ export const RegularExpresssions = {
 };
 
 export enum EmployerTypeEnum {
-    SCHOOL = 'School',
-    TUTION = 'Tution',
-    HOMEBATCH = 'Home Batch',
+    School = 'School',
+    Tution = 'Tution',
+    HomeBatch = 'HomeBatch',
 }
 export enum RequirementTypeEnum {
     FULL_TIME = 'Full Time',

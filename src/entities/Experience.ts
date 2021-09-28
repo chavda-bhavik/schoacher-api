@@ -43,7 +43,7 @@ export class Experience extends BaseEntity {
     @Column({
         type: 'enum',
         enum: EmployerTypeEnum,
-        default: EmployerTypeEnum.SCHOOL,
+        default: EmployerTypeEnum.School,
     })
     type: EmployerTypeEnum;
 

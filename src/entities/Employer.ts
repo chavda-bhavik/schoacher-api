@@ -15,7 +15,7 @@ export class Employer extends BaseEntity {
             .test('valid', 'Mobile Number is not valid', (val) => (val ? RegularExpresssions.mobile.test(val) : true)),
         mobile2: Yup.string()
             .nullable()
-            .test('valid', 'Mobile Number is not valid', (val) => (val ? RegularExpresssions.mobile.test(val) : true))
+            .test('valid', 'Mobile Number is not valid', (val) => (val ? RegularExpresssions.mobile.test(val) : true)),
     });
 
     @Field()
@@ -30,7 +30,7 @@ export class Employer extends BaseEntity {
     @Column({
         type: 'enum',
         enum: EmployerTypeEnum,
-        default: EmployerTypeEnum.SCHOOL,
+        default: EmployerTypeEnum.School,
     })
     type: EmployerTypeEnum;
 
