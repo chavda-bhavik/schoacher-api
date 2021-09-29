@@ -109,6 +109,18 @@ export const formatYupError = (err: ValidationError) => {
     return errors;
 };
 
+export const deleteSubjects = async (
+    subjectsFieldName: 'material_id' | 'experience_id' | 'requirement_id' | 'employer_id',
+    fieldValue: string | number,
+) => {
+    return await getConnection()
+        .createQueryBuilder()
+        .delete()
+        .from(SubStdBoard)
+        .where(`"${subjectsFieldName}" = :id1`, { id1: fieldValue })
+        .execute();
+};
+
 export const saveSubjects = async (
     entity: SubjectsEntityInstance,
     subjectsFieldName: 'material_id' | 'experience_id' | 'requirement_id' | 'employer_id',
@@ -116,7 +128,7 @@ export const saveSubjects = async (
     subjects: SubStdBoardType[],
 ): Promise<SubjectsEntityInstance> => {
     // delete subjects of entity
-    await getConnection().createQueryBuilder().delete().from(SubStdBoard).where(`"${subjectsFieldName}" = :id1`, { id1: fieldValue }).execute();
+    await deleteSubjects(subjectsFieldName, fieldValue);
 
     // add subjects to entity
     let subjectsSet = new Set();
