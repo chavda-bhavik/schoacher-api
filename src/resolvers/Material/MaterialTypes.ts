@@ -1,5 +1,5 @@
 import { InputType, Field } from 'type-graphql';
-import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
 @InputType()
 export class AddMaterialType {
@@ -10,7 +10,7 @@ export class AddMaterialType {
     description?: string;
 
     @Field(() => GraphQLUpload, { nullable: true })
-    image: FileUpload;
+    document: FileUpload;
 }
 
 @InputType()
@@ -22,5 +22,5 @@ export class UpdateMaterialType {
     description?: string;
 
     @Field(() => GraphQLUpload, { nullable: true })
-    image?: FileUpload;
+    document?: FileUpload;
 }

@@ -39,7 +39,7 @@ export class Experience extends BaseEntity {
     @Column({ type: 'text' })
     title: string;
 
-    @Field()
+    @Field(() => EmployerTypeEnum)
     @Column({
         type: 'enum',
         enum: EmployerTypeEnum,
