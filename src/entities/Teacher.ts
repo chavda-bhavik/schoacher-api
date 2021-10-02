@@ -58,7 +58,7 @@ export class Teacher extends BaseEntity {
     @Column({ type: 'text', unique: true })
     email: string;
 
-    @Field()
+    @Field({ nullable: true })
     @Column({ nullable: true, type: 'text' })
     about: string;
 
