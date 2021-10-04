@@ -1,9 +1,10 @@
 import { RegularExpresssions } from '@/constants';
 import { Field, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import * as Yup from 'yup';
 import { SubStdBoard } from '.';
 import { EmployerTypeEnum } from '../constants';
+import { Address } from './Address';
 
 @ObjectType()
 @Entity()
@@ -63,6 +64,18 @@ export class Employer extends BaseEntity {
         onUpdate: 'CASCADE',
     })
     subjects?: SubStdBoard[];
+
+    @Field(() => Address)
+    @OneToOne(() => Address, (addr) => addr.employer, {
+        cascade: true,
+        onDelete: 'CASCADE',
+        onUpdate: 'NO ACTION',
+    })
+    @JoinColumn({ name: 'address_id' })
+    address?: Address;
+
+    @Column({ nullable: true })
+    address_id: number;
 
     @CreateDateColumn()
     created!: Date;

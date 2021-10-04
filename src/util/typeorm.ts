@@ -2,7 +2,20 @@ import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { ValidationError } from 'yup';
 import { getConnection } from 'typeorm';
 
-import { User, Teacher, Qualification, Experience, SubStdBoard, Board, Standard, Subject, Material, Employer, Requirement } from '@/entities';
+import {
+    User,
+    Teacher,
+    Qualification,
+    Experience,
+    SubStdBoard,
+    Board,
+    Standard,
+    Subject,
+    Material,
+    Employer,
+    Requirement,
+    Address,
+} from '@/entities';
 import { FieldError, SubStdBoardType } from '@/resolvers/SharedTypes';
 
 type EntityConstructor =
@@ -16,9 +29,22 @@ type EntityConstructor =
     | typeof SubStdBoard
     | typeof Material
     | typeof Employer
-    | typeof Requirement;
+    | typeof Requirement
+    | typeof Address;
 
-type EntityInstance = User | Teacher | Qualification | Experience | SubStdBoard | Board | Standard | Subject | Material | Employer | Requirement;
+type EntityInstance =
+    | User
+    | Teacher
+    | Qualification
+    | Experience
+    | SubStdBoard
+    | Board
+    | Standard
+    | Subject
+    | Material
+    | Employer
+    | Requirement
+    | Address;
 type SubjectsEntityInstance = Experience | Material | Employer | Requirement;
 
 const entities: { [key: string]: EntityConstructor } = {
@@ -33,6 +59,7 @@ const entities: { [key: string]: EntityConstructor } = {
     Material,
     Employer,
     Requirement,
+    Address,
 };
 
 export const getData = async <T extends EntityConstructor>(Constructor: T, options?: FindOneOptions): Promise<InstanceType<T>[]> => {
