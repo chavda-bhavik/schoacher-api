@@ -5,8 +5,8 @@ import { Employer, Teacher, SubStdBoard, Address } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity, saveSubjects, getData, removeEntity } from '@/util/typeorm';
 import { EmployerResponseType, FieldError, SubStdBoardType } from '../SharedTypes';
 import { RegisterEmployerType, UpdateEmployerType } from './EmployerTypes';
-import { uploadFile } from '@/util/upload';
-import { RegularExpresssions } from '@/constants';
+import { deleteFile, uploadFile } from '@/util/upload';
+import constants, { RegularExpresssions } from '@/constants';
 
 @Resolver(Employer)
 export class EmployerResolver {
@@ -56,11 +56,8 @@ export class EmployerResolver {
         @Arg('data') data: UpdateEmployerType,
         @Arg('subjects', () => [SubStdBoardType], { nullable: true }) subjects: SubStdBoardType[],
     ): Promise<EmployerResponseType> {
+        let oldEmployer = await findEntityOrThrow(Employer, id);
         // uploading photo if available
-        let photoUrl = null;
-        if (data.photo) {
-            photoUrl = await uploadFile(data.photo);
-        }
         let employerData: Partial<Employer> = data;
         let address = null;
         if (data.address) {
@@ -74,7 +71,12 @@ export class EmployerResolver {
                 employerData.address_id = address.entity.id;
             }
         }
-        if (photoUrl) employerData.photoUrl = photoUrl;
+        if (typeof data.photo !== 'undefined') {
+            if (data.photo) {
+                employerData.photoUrl = await uploadFile(data.photo);
+                if (oldEmployer.photoUrl !== constants.employerDefaultPhotoUrl) await deleteFile(oldEmployer.photoUrl);
+            } else employerData.photoUrl = constants.employerDefaultPhotoUrl;
+        }
         // saving/updating entity
         let employer = await updateEntity(Employer, id, employerData);
         // adding subjects to employer if available

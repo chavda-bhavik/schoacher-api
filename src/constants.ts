@@ -16,6 +16,7 @@ export enum RequirementTypeEnum {
 }
 const constants = {
     teacherDefaultPhotoUrl: 'https://res.cloudinary.com/dkuoqamig/image/upload/v1631936323/pxxydj4zsfuqez71im2i.jpg',
+    employerDefaultPhotoUrl: 'https://source.unsplash.com/umhyDLYKfLM/350x250',
 };
 
 export default constants;

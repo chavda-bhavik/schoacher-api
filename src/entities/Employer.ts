@@ -55,7 +55,7 @@ export class Employer extends BaseEntity {
     about: string;
 
     @Field({ nullable: true })
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: 'https://source.unsplash.com/umhyDLYKfLM/350x250' })
     photoUrl: string;
 
     @OneToMany(() => SubStdBoard, (sub) => sub.employer, {
