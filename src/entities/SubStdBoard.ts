@@ -1,14 +1,5 @@
 import { Field, ObjectType } from 'type-graphql';
-import {
-    BaseEntity,
-    Entity,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
-    ManyToOne,
-    JoinColumn,
-    Column,
-} from 'typeorm';
+import { BaseEntity, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { Experience, Employer, Standard, Board, Subject, Material, Requirement } from '.';
 
 @ObjectType()
@@ -22,6 +13,7 @@ export class SubStdBoard extends BaseEntity {
     @ManyToOne(() => Standard)
     standard: Partial<Standard>;
 
+    @Field()
     @Column()
     standardId: number;
 
@@ -29,6 +21,7 @@ export class SubStdBoard extends BaseEntity {
     @ManyToOne(() => Board)
     board: Partial<Board>;
 
+    @Field()
     @Column()
     boardId: number;
 
@@ -36,6 +29,7 @@ export class SubStdBoard extends BaseEntity {
     @ManyToOne(() => Subject)
     subject: Partial<Subject>;
 
+    @Field()
     @Column()
     subjectId: number;
 

@@ -3,7 +3,7 @@ import { RequirementTypeEnum } from '@/constants';
 
 registerEnumType(RequirementTypeEnum, {
     name: 'RequirementTypeEnum',
-    description: 'Enum describing Requirement Type'
+    description: 'Enum describing Requirement Type',
 });
 
 @InputType()
@@ -23,10 +23,10 @@ export class RequirementType {
     @Field({ nullable: true })
     endTime?: string;
 
-    @Field({ nullable: true })
+    @Field(() => Number, { nullable: true })
     salaryFrom?: number;
 
-    @Field({ nullable: true })
+    @Field(() => Number, { nullable: true })
     salaryUpTo?: number;
 
     @Field({ nullable: true })

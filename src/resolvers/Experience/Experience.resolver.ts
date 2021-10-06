@@ -1,6 +1,6 @@
 import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
 import { Experience, SubStdBoard } from '@/entities';
-import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity, saveSubjects } from '@/util/typeorm';
+import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity, saveSubjects, deleteSubjects } from '@/util/typeorm';
 import { ExperienceResponseType, SubStdBoardType } from '../SharedTypes';
 import { ExperienceType } from './ExperienceTypes';
 
@@ -22,7 +22,7 @@ export class ExperienceResolver {
             teacher: { id: teacherId },
         });
         if (experience.entity && subjects) {
-            await saveSubjects(experience.entity, "experience_id", experience.entity.id, subjects);
+            await saveSubjects(experience.entity, 'experience_id', experience.entity.id, subjects);
         }
         return experience;
     }
@@ -41,7 +41,7 @@ export class ExperienceResolver {
     ): Promise<ExperienceResponseType> {
         let experience = await updateEntity(Experience, id, data);
         if (experience.entity && subjects) {
-            await saveSubjects(experience.entity, "experience_id", experience.entity.id, subjects);
+            await saveSubjects(experience.entity, 'experience_id', experience.entity.id, subjects);
         }
         return experience;
     }
@@ -49,6 +49,7 @@ export class ExperienceResolver {
     @Mutation(() => Experience)
     async deleteExperience(@Arg('teacherId') teacherId: number, @Arg('experienceId') experienceId: number): Promise<Experience | undefined> {
         await findEntityOrThrow(Experience, undefined, { where: { id: experienceId, teacher: { id: teacherId } } });
+        await deleteSubjects('experience_id', experienceId);
         return removeEntity(Experience, experienceId);
     }
 

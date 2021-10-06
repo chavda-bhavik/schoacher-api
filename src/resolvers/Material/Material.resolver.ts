@@ -18,10 +18,10 @@ export class MaterialResolver {
         @Arg('data') data: AddMaterialType,
         @Arg('subjects', () => [SubStdBoardType], { nullable: true }) subjects: SubStdBoardType[],
     ): Promise<MaterialResponseType> {
-        let imageUrl = await uploadFile(data.image);
+        let documentUrl = await uploadFile(data.document);
         let material = await createEntity(Material, {
             ...data,
-            fileUrl: imageUrl,
+            fileUrl: documentUrl,
             teacher: { id: teacherId },
         });
         if (material.entity && subjects) {
@@ -42,9 +42,9 @@ export class MaterialResolver {
         @Arg('data') data: UpdateMaterialType,
         @Arg('subjects', () => [SubStdBoardType], { nullable: true }) subjects: SubStdBoardType[],
     ): Promise<MaterialResponseType> {
-        let fileUrl = null
-        if (data.image) {
-            fileUrl = await uploadFile(data.image)
+        let fileUrl = null;
+        if (data.document) {
+            fileUrl = await uploadFile(data.document);
         }
         let materialData: Partial<Material> = { ...data };
         if (fileUrl) materialData.fileUrl = fileUrl;

@@ -5,8 +5,8 @@ import { Employer, Experience, Material, Qualification, Teacher } from '@/entiti
 import { createEntity, findEntityOrThrow, getData, updateEntity } from '@/util/typeorm';
 import { FieldError, TeacherResponseType } from '../SharedTypes';
 import { RegisterTeacherType, UpdateTeacherType } from './TeacherTypes';
-import { uploadFile } from '@/util/upload';
-import { RegularExpresssions } from '@/constants';
+import { uploadFile, deleteFile } from '@/util/upload';
+import constants, { RegularExpresssions } from '@/constants';
 
 @Resolver(Teacher)
 export class TeacherResolver {
@@ -57,12 +57,16 @@ export class TeacherResolver {
 
     @Mutation(() => TeacherResponseType)
     async updateTeacherInfo(@Arg('id') id: number, @Arg('data') data: UpdateTeacherType): Promise<TeacherResponseType> {
-        let photoUrl = null;
-        if (data.photo) {
-            photoUrl = await uploadFile(data.photo);
-        }
+        let teacher = await findEntityOrThrow(Teacher, id);
         let teacherData: Partial<Teacher> = data;
-        if (photoUrl) teacherData.photoUrl = photoUrl;
+        if (typeof data.photo !== 'undefined') {
+            if (data.photo) {
+                // uploading photo
+                teacherData.photoUrl = await uploadFile(data.photo);
+                // deleting old photo if photoUrl is not same as defaultUrl
+                if (teacher.photoUrl !== constants.teacherDefaultPhotoUrl) await deleteFile(teacher.photoUrl);
+            } else teacherData.photoUrl = constants.teacherDefaultPhotoUrl;
+        }
         return updateEntity(Teacher, id, teacherData);
     }
 }

@@ -39,6 +39,9 @@ export class UpdateTeacherType {
     @Field({ nullable: true })
     gender?: number;
 
+    @Field({ nullable: true })
+    about?: string;
+
     @Field(() => GraphQLUpload, { nullable: true })
     photo?: FileUpload;
 }

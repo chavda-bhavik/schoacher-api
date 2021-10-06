@@ -1,4 +1,4 @@
-import { RegularExpresssions } from '@/constants';
+import constants, { RegularExpresssions } from '@/constants';
 import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import * as Yup from 'yup';
@@ -15,7 +15,7 @@ export class Teacher extends BaseEntity {
         mobile2: Yup.string()
             .nullable()
             .test('valid', 'Mobile Number is not valid', (val) => (val ? RegularExpresssions.mobile.test(val) : true)),
-        gender: Yup.number().test('valid', 'Gender is Not Valid', (val) => (val ? [0, 1].includes(val) : true))
+        gender: Yup.number().test('valid', 'Gender is Not Valid', (val) => (val ? [0, 1].includes(val) : true)),
     });
 
     @Field()
@@ -58,8 +58,12 @@ export class Teacher extends BaseEntity {
     @Column({ type: 'text', unique: true })
     email: string;
 
+    @Field({ nullable: true })
+    @Column({ nullable: true, type: 'text' })
+    about: string;
+
     @Field()
-    @Column({ nullable: false, default: "https://res.cloudinary.com/dkuoqamig/image/upload/v1631936323/pxxydj4zsfuqez71im2i.jpg" })
+    @Column({ nullable: false, default: constants.teacherDefaultPhotoUrl })
     photoUrl: string;
 
     @CreateDateColumn()

@@ -2,7 +2,20 @@ import { FindOneOptions } from 'typeorm/find-options/FindOneOptions';
 import { ValidationError } from 'yup';
 import { getConnection } from 'typeorm';
 
-import { User, Teacher, Qualification, Experience, SubStdBoard, Board, Standard, Subject, Material, Employer, Requirement } from '@/entities';
+import {
+    User,
+    Teacher,
+    Qualification,
+    Experience,
+    SubStdBoard,
+    Board,
+    Standard,
+    Subject,
+    Material,
+    Employer,
+    Requirement,
+    Address,
+} from '@/entities';
 import { FieldError, SubStdBoardType } from '@/resolvers/SharedTypes';
 
 type EntityConstructor =
@@ -16,12 +29,38 @@ type EntityConstructor =
     | typeof SubStdBoard
     | typeof Material
     | typeof Employer
-    | typeof Requirement;
+    | typeof Requirement
+    | typeof Address;
 
-type EntityInstance = User | Teacher | Qualification | Experience | SubStdBoard | Board | Standard | Subject | Material | Employer | Requirement;
+type EntityInstance =
+    | User
+    | Teacher
+    | Qualification
+    | Experience
+    | SubStdBoard
+    | Board
+    | Standard
+    | Subject
+    | Material
+    | Employer
+    | Requirement
+    | Address;
 type SubjectsEntityInstance = Experience | Material | Employer | Requirement;
 
-const entities: { [key: string]: EntityConstructor } = { User, Teacher, Qualification, Experience, Subject, Standard, Board, SubStdBoard, Material, Employer, Requirement };
+const entities: { [key: string]: EntityConstructor } = {
+    User,
+    Teacher,
+    Qualification,
+    Experience,
+    Subject,
+    Standard,
+    Board,
+    SubStdBoard,
+    Material,
+    Employer,
+    Requirement,
+    Address,
+};
 
 export const getData = async <T extends EntityConstructor>(Constructor: T, options?: FindOneOptions): Promise<InstanceType<T>[]> => {
     let data = await Constructor.find(options);
@@ -79,9 +118,10 @@ export const removeEntity = async <T extends EntityConstructor>(
     hard?: boolean,
 ): Promise<InstanceType<T>> => {
     const instance = await findEntityOrThrow(Constructor, id, findOptions);
+    let instanceCopy = Object.assign({}, instance);
     if (hard || !('deleted' in Constructor)) await instance.remove();
     else await instance.softRemove();
-    return instance;
+    return instanceCopy;
 };
 
 export const formatYupError = (err: ValidationError) => {
@@ -96,14 +136,26 @@ export const formatYupError = (err: ValidationError) => {
     return errors;
 };
 
+export const deleteSubjects = async (
+    subjectsFieldName: 'material_id' | 'experience_id' | 'requirement_id' | 'employer_id',
+    fieldValue: string | number,
+) => {
+    return await getConnection()
+        .createQueryBuilder()
+        .delete()
+        .from(SubStdBoard)
+        .where(`"${subjectsFieldName}" = :id1`, { id1: fieldValue })
+        .execute();
+};
+
 export const saveSubjects = async (
     entity: SubjectsEntityInstance,
     subjectsFieldName: 'material_id' | 'experience_id' | 'requirement_id' | 'employer_id',
     fieldValue: string | number,
-    subjects: SubStdBoardType[]
+    subjects: SubStdBoardType[],
 ): Promise<SubjectsEntityInstance> => {
     // delete subjects of entity
-    await getConnection().createQueryBuilder().delete().from(SubStdBoard).where(`"${subjectsFieldName}" = :id1`, { id1: fieldValue }).execute();
+    await deleteSubjects(subjectsFieldName, fieldValue);
 
     // add subjects to entity
     let subjectsSet = new Set();

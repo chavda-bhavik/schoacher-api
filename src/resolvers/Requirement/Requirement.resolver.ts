@@ -24,10 +24,10 @@ export class RequirementResolver {
     ): Promise<RequirementResponseType> {
         let requirement = await createEntity(Requirement, {
             ...data,
-            employer: { id: employerId }
+            employer: { id: employerId },
         });
         if (requirement.entity && subjects) {
-            await saveSubjects(requirement.entity, "requirement_id", requirement.entity.id, subjects);
+            await saveSubjects(requirement.entity, 'requirement_id', requirement.entity.id, subjects);
         }
         return requirement;
     }
@@ -46,7 +46,7 @@ export class RequirementResolver {
     ): Promise<RequirementResponseType> {
         let requirement = await updateEntity(Requirement, id, data);
         if (requirement.entity && subjects) {
-            await saveSubjects(requirement.entity, "requirement_id", requirement.entity.id, subjects);
+            await saveSubjects(requirement.entity, 'requirement_id', requirement.entity.id, subjects);
         }
         return requirement;
     }
@@ -54,6 +54,7 @@ export class RequirementResolver {
     @Mutation(() => Requirement)
     async deleteRequirement(@Arg('employerId') employerId: number, @Arg('requirementId') requirementId: number): Promise<Requirement | undefined> {
         await findEntityOrThrow(Requirement, undefined, { where: { id: requirementId, employer: { id: employerId } } });
+        await removeEntity(SubStdBoard, undefined, { where: { requirement_id: requirementId } });
         return removeEntity(Requirement, requirementId);
     }
 

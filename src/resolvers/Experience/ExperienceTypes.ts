@@ -3,7 +3,7 @@ import { EmployerTypeEnum } from '@/constants';
 
 registerEnumType(EmployerTypeEnum, {
     name: 'EmployerTypeEnum',
-    description: 'Enum describing Employer Type'
+    description: 'Enum describing Employer Type',
 });
 
 @InputType()
@@ -18,9 +18,6 @@ export class ExperienceType {
     title?: string;
 
     @Field({ nullable: true })
-    instituteName?: string;
-
-    @Field({ nullable: true })
     currentlyWorking?: boolean;
 
     @Field({ nullable: true })
@@ -28,4 +25,7 @@ export class ExperienceType {
 
     @Field(() => EmployerTypeEnum, { nullable: true })
     type?: EmployerTypeEnum;
+
+    @Field({ nullable: true })
+    employerName?: string;
 }
