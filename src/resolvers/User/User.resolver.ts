@@ -1,12 +1,6 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { User } from '@/entities/User';
-import {
-    createEntity,
-    findEntityOrThrow,
-    getData,
-    removeEntity,
-    updateEntity,
-} from '@/util/typeorm';
+import { createEntity, findEntityOrThrow, getData, removeEntity, updateEntity } from '@/util/typeorm';
 import { ResponseType } from '../SharedTypes';
 import { UserInputType } from './UserTypes';
 
@@ -31,15 +25,12 @@ export class UserResolver {
     }
 
     @Mutation(() => ResponseType)
-    async updateUser(
-        @Arg('id') id: number,
-        @Arg('data') data: UserInputType,
-    ): Promise<ResponseType> {
+    async updateUser(@Arg('id') id: number, @Arg('data') data: UserInputType): Promise<ResponseType> {
         return updateEntity(User, id, data);
     }
 
     @Mutation(() => User)
-    async deleteUser(@Arg('id') id: number): Promise<User | undefined> {
+    async deleteUser(@Arg('id') id: number): Promise<User | null> {
         return removeEntity(User, id);
     }
 }

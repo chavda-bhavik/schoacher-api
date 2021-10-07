@@ -9,3 +9,5 @@ export { Experience } from './Experience';
 export { Material } from './Material';
 export { Employer } from './Employer';
 export { Requirement } from './Requirement';
+export { Address } from './Address';
+export { Application } from './Application';

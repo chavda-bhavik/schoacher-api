@@ -27,10 +27,7 @@ export class QualificationResolver {
     }
 
     @Mutation(() => Qualification)
-    async deleteQualification(
-        @Arg('teacherId') teacherId: number,
-        @Arg('qualificationId') qualificationId: number,
-    ): Promise<Qualification | undefined> {
+    async deleteQualification(@Arg('teacherId') teacherId: number, @Arg('qualificationId') qualificationId: number): Promise<Qualification | null> {
         await findEntityOrThrow(Qualification, undefined, { where: { id: qualificationId, teacher: { id: teacherId } } });
         return removeEntity(Qualification, qualificationId);
     }

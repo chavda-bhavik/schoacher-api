@@ -10,7 +10,9 @@ export class Requirement extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Employer, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Employer, (emp) => emp.requirements, {
+        onDelete: 'CASCADE',
+    })
     employer: Partial<Employer>;
 
     @Column()
@@ -20,11 +22,11 @@ export class Requirement extends BaseEntity {
     @Column({ type: 'text' })
     title: string;
 
-    @Field()
+    @Field(() => RequirementTypeEnum)
     @Column({
         type: 'enum',
         enum: RequirementTypeEnum,
-        default: RequirementTypeEnum.FULL_TIME
+        default: RequirementTypeEnum.FULL_TIME,
     })
     type: RequirementTypeEnum;
 
@@ -33,11 +35,11 @@ export class Requirement extends BaseEntity {
     qualification: string;
 
     @Field({ nullable: true })
-    @Column({ nullable: true, type: 'date' })
+    @Column({ nullable: true, type: 'timestamp' })
     startTime: string;
 
     @Field({ nullable: true })
-    @Column({ nullable: true, type: 'date' })
+    @Column({ nullable: true, type: 'timestamp' })
     endTime: string;
 
     @Field({ nullable: true })
@@ -52,10 +54,8 @@ export class Requirement extends BaseEntity {
     @Column({ nullable: true, type: 'text' })
     description: string;
 
-    @OneToMany(() => SubStdBoard, (sub) => sub.employer, {
+    @OneToMany(() => SubStdBoard, (sub) => sub.requirement, {
         cascade: true,
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     })
     subjects?: SubStdBoard[];
 
