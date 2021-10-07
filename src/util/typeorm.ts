@@ -116,12 +116,15 @@ export const removeEntity = async <T extends EntityConstructor>(
     id?: number | string,
     findOptions?: FindOneOptions,
     hard?: boolean,
-): Promise<InstanceType<T>> => {
-    const instance = await findEntityOrThrow(Constructor, id, findOptions);
-    let instanceCopy = Object.assign({}, instance);
-    if (hard || !('deleted' in Constructor)) await instance.remove();
-    else await instance.softRemove();
-    return instanceCopy;
+    throwError?: boolean,
+): Promise<InstanceType<T> | null> => {
+    const instance = await findEntityOrThrow(Constructor, id, findOptions, throwError);
+    if (instance) {
+        let instanceCopy = Object.assign({}, instance);
+        if (hard || !('deleted' in Constructor)) await instance.remove();
+        else await instance.softRemove();
+        return instanceCopy;
+    } else return null;
 };
 
 export const formatYupError = (err: ValidationError) => {

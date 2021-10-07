@@ -56,7 +56,7 @@ export class MaterialResolver {
     }
 
     @Mutation(() => Material)
-    async deleteMaterial(@Arg('teacherId') teacherId: number, @Arg('materialId') materialId: number): Promise<Material | undefined> {
+    async deleteMaterial(@Arg('teacherId') teacherId: number, @Arg('materialId') materialId: number): Promise<Material | null> {
         return removeEntity(Material, undefined, { where: { id: materialId, teacher: { id: teacherId } } });
     }
 

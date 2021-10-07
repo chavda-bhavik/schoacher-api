@@ -2,7 +2,7 @@ import { RegularExpresssions } from '@/constants';
 import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import * as Yup from 'yup';
-import { SubStdBoard } from '.';
+import { Requirement, SubStdBoard } from '.';
 import { EmployerTypeEnum } from '../constants';
 import { Address } from './Address';
 
@@ -60,17 +60,14 @@ export class Employer extends BaseEntity {
 
     @OneToMany(() => SubStdBoard, (sub) => sub.employer, {
         cascade: true,
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     })
     subjects?: SubStdBoard[];
 
-    @Field(() => Address)
-    @OneToOne(() => Address, (addr) => addr.employer, {
-        cascade: true,
-        onDelete: 'CASCADE',
-        onUpdate: 'NO ACTION',
-    })
+    @OneToMany(() => Requirement, (req) => req.employer)
+    requirements?: Requirement[];
+
+    @Field(() => Address, { nullable: true })
+    @OneToOne(() => Address, (addr) => addr.employer)
     @JoinColumn({ name: 'address_id' })
     address?: Address;
 

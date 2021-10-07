@@ -47,7 +47,7 @@ export class ExperienceResolver {
     }
 
     @Mutation(() => Experience)
-    async deleteExperience(@Arg('teacherId') teacherId: number, @Arg('experienceId') experienceId: number): Promise<Experience | undefined> {
+    async deleteExperience(@Arg('teacherId') teacherId: number, @Arg('experienceId') experienceId: number): Promise<Experience | null> {
         await findEntityOrThrow(Experience, undefined, { where: { id: experienceId, teacher: { id: teacherId } } });
         await deleteSubjects('experience_id', experienceId);
         return removeEntity(Experience, experienceId);

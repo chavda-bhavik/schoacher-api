@@ -47,16 +47,20 @@ export class SubStdBoard extends BaseEntity {
     @Column({ nullable: true })
     material_id: number;
 
-    @ManyToOne(() => Employer, (mat) => mat.subjects)
+    @ManyToOne(() => Employer, (mat) => mat.subjects, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({ name: 'employer_id' })
     employer: Partial<Employer>;
 
     @Column({ nullable: true })
     employer_id: number;
 
-    @ManyToOne(() => Requirement, (mat) => mat.subjects)
+    @ManyToOne(() => Requirement, (mat) => mat.subjects, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({ name: 'requirement_id' })
-    requirement: Partial<Employer>;
+    requirement: Partial<Requirement>;
 
     @Column({ nullable: true })
     requirement_id: number;

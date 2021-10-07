@@ -10,7 +10,9 @@ export class Requirement extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Employer, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Employer, (emp) => emp.requirements, {
+        onDelete: 'CASCADE',
+    })
     employer: Partial<Employer>;
 
     @Column()
@@ -54,8 +56,6 @@ export class Requirement extends BaseEntity {
 
     @OneToMany(() => SubStdBoard, (sub) => sub.requirement, {
         cascade: true,
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
     })
     subjects?: SubStdBoard[];
 

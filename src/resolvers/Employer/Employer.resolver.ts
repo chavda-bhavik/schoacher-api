@@ -15,9 +15,9 @@ export class EmployerResolver {
         return getData(SubStdBoard, { where: { employer_id: employer.id } });
     }
 
-    @FieldResolver(() => [Address])
+    @FieldResolver(() => [Address], { nullable: true })
     address(@Root() employer: Employer) {
-        return findEntityOrThrow(Address, undefined, { where: { employer_id: employer.id } });
+        return findEntityOrThrow(Address, undefined, { where: { employer_id: employer.id } }, false);
     }
 
     @Mutation(() => EmployerResponseType)
@@ -61,7 +61,7 @@ export class EmployerResolver {
         let employerData: Partial<Employer> = data;
         let address = null;
         if (data.address) {
-            await removeEntity(Address, undefined, { where: { employer_id: id } });
+            await removeEntity(Address, undefined, { where: { employer_id: id } }, true, false);
             address = await createEntity(Address, {
                 ...data.address,
                 employer_id: id,
