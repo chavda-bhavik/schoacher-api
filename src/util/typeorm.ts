@@ -15,6 +15,7 @@ import {
     Employer,
     Requirement,
     Address,
+    Application,
 } from '@/entities';
 import { FieldError, SubStdBoardType } from '@/resolvers/SharedTypes';
 
@@ -30,7 +31,8 @@ type EntityConstructor =
     | typeof Material
     | typeof Employer
     | typeof Requirement
-    | typeof Address;
+    | typeof Address
+    | typeof Application;
 
 type EntityInstance =
     | User
@@ -44,7 +46,8 @@ type EntityInstance =
     | Material
     | Employer
     | Requirement
-    | Address;
+    | Address
+    | Application;
 type SubjectsEntityInstance = Experience | Material | Employer | Requirement;
 
 const entities: { [key: string]: EntityConstructor } = {
@@ -60,6 +63,7 @@ const entities: { [key: string]: EntityConstructor } = {
     Employer,
     Requirement,
     Address,
+    Application,
 };
 
 export const getData = async <T extends EntityConstructor>(Constructor: T, options?: FindOneOptions): Promise<InstanceType<T>[]> => {
