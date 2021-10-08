@@ -10,7 +10,8 @@ import {
     SubStdBoardResolver,
     MaterialResolver,
     EmployerResolver,
-    RequirementResolver
+    RequirementResolver,
+    ApplicationResolver,
 } from '../resolvers';
 
 export const createSchema = async () => {
@@ -26,7 +27,8 @@ export const createSchema = async () => {
             SubStdBoardResolver,
             MaterialResolver,
             EmployerResolver,
-            RequirementResolver
+            RequirementResolver,
+            ApplicationResolver,
         ],
         validate: false,
         dateScalarMode: 'isoDate',
