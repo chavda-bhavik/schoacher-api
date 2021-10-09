@@ -3,7 +3,6 @@ import { ValidationError } from 'yup';
 import { getConnection } from 'typeorm';
 
 import {
-    User,
     Teacher,
     Qualification,
     Experience,
@@ -20,7 +19,6 @@ import {
 import { FieldError, SubStdBoardType } from '@/resolvers/SharedTypes';
 
 type EntityConstructor =
-    | typeof User
     | typeof Teacher
     | typeof Qualification
     | typeof Experience
@@ -35,7 +33,6 @@ type EntityConstructor =
     | typeof Application;
 
 type EntityInstance =
-    | User
     | Teacher
     | Qualification
     | Experience
@@ -51,7 +48,6 @@ type EntityInstance =
 type SubjectsEntityInstance = Experience | Material | Employer | Requirement;
 
 const entities: { [key: string]: EntityConstructor } = {
-    User,
     Teacher,
     Qualification,
     Experience,

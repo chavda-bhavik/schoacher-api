@@ -9,9 +9,23 @@ interface sessionStore {
     token: string;
     userType: 'teacher' | 'employer';
 }
-export type MyContext = {
+type MyContext = {
     req: Request & { session: sessionStore };
     res: Response;
-    userType: 'teacher' | 'employer';
     user: Teacher | Employer;
 };
+type TeacherContext = {
+    req: Request & { session: sessionStore };
+    res: Response;
+    user: Teacher;
+}
+type EmployerContext = {
+    req: Request & { session: sessionStore };
+    res: Response;
+    user: Employer;
+}
+interface TokenDecoded {
+    id: number;
+    type: 'teacher' | 'employer';
+    iat?: number
+}

@@ -1,43 +1,59 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { Qualification } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity } from '@/util/typeorm';
 import { QualificationResponseType } from '../SharedTypes';
 import { QualificationType } from './QualificationTypes';
+import { TeacherAuthMiddleware } from '@/middlewares';
+import { TeacherContext } from '@/global';
 
 @Resolver(Qualification)
 export class QualificationResolver {
     @Mutation(() => QualificationResponseType)
-    async addQualification(@Arg('teacherId') teacherId: number, @Arg('data') data: QualificationType): Promise<QualificationResponseType> {
+    @UseMiddleware(TeacherAuthMiddleware)
+    async addQualification(
+        @Ctx() { user }: TeacherContext,
+        @Arg('data') data: QualificationType
+    ): Promise<QualificationResponseType> {
         let qualification = await createEntity(Qualification, {
             ...data,
-            teacher: { id: teacherId },
+            teacher: { id: user.id },
         });
         return qualification;
     }
 
     @Query(() => [Qualification])
-    async getAllQualifications(@Arg('teacherId') teacherId: number): Promise<Qualification[] | undefined> {
-        let qualifications = getData(Qualification, { where: { teacher: { id: teacherId } }, order: { start: 'ASC' } });
+    @UseMiddleware(TeacherAuthMiddleware)
+    async getAllQualifications(
+        @Ctx() { user }: TeacherContext
+    ): Promise<Qualification[] | undefined> {
+        let qualifications = getData(Qualification, { where: { teacher: { id: user.id } }, order: { start: 'ASC' } });
         return qualifications;
     }
 
     @Mutation(() => QualificationResponseType)
-    async updateQualification(@Arg('qualificationId') id: number, @Arg('data') data: QualificationType): Promise<QualificationResponseType> {
+    @UseMiddleware(TeacherAuthMiddleware)
+    async updateQualification(
+        @Arg('qualificationId') id: number,
+        @Arg('data') data: QualificationType
+    ): Promise<QualificationResponseType> {
         return updateEntity(Qualification, id, data);
     }
 
     @Mutation(() => Qualification)
-    async deleteQualification(@Arg('teacherId') teacherId: number, @Arg('qualificationId') qualificationId: number): Promise<Qualification | null> {
-        await findEntityOrThrow(Qualification, undefined, { where: { id: qualificationId, teacher: { id: teacherId } } });
+    @UseMiddleware(TeacherAuthMiddleware)
+    async deleteQualification(
+        @Arg('qualificationId') qualificationId: number
+    ): Promise<Qualification | null> {
+        await findEntityOrThrow(Qualification, qualificationId);
         return removeEntity(Qualification, qualificationId);
     }
 
     @Query(() => Qualification)
-    async getQualifications(
-        @Arg('teacherId') teacherId: number,
+    @UseMiddleware(TeacherAuthMiddleware)
+    async getQualification(
         @Arg('qualificationId') qualificationId: number,
     ): Promise<Qualification | undefined> {
-        let qualifications = findEntityOrThrow(Qualification, undefined, { where: { id: qualificationId, teacher: { id: teacherId } } });
+        let qualifications = findEntityOrThrow(Qualification, qualificationId);
         return qualifications;
     }
 }

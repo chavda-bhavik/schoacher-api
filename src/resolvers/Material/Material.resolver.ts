@@ -1,9 +1,11 @@
-import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import { Material, SubStdBoard } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity, saveSubjects } from '@/util/typeorm';
 import { MaterialResponseType, SubStdBoardType } from '../SharedTypes';
 import { AddMaterialType, UpdateMaterialType } from './MaterialTypes';
 import { uploadFile } from '@/util/upload';
+import { TeacherAuthMiddleware } from '@/middlewares';
+import { TeacherContext } from '@/global';
 
 @Resolver(Material)
 export class MaterialResolver {
@@ -13,8 +15,9 @@ export class MaterialResolver {
     }
 
     @Mutation(() => MaterialResponseType)
+    @UseMiddleware(TeacherAuthMiddleware)
     async addMaterial(
-        @Arg('teacherId') teacherId: number,
+        @Ctx() { user }: TeacherContext,
         @Arg('data') data: AddMaterialType,
         @Arg('subjects', () => [SubStdBoardType], { nullable: true }) subjects: SubStdBoardType[],
     ): Promise<MaterialResponseType> {
@@ -22,7 +25,7 @@ export class MaterialResolver {
         let material = await createEntity(Material, {
             ...data,
             fileUrl: documentUrl,
-            teacher: { id: teacherId },
+            teacher: { id: user.id },
         });
         if (material.entity && subjects) {
             await saveSubjects(material.entity, 'material_id', material.entity.id, subjects);
@@ -31,12 +34,14 @@ export class MaterialResolver {
     }
 
     @Query(() => [Material])
-    async getAllMaterials(@Arg('teacherId') teacherId: number): Promise<Material[] | undefined> {
-        let materials = getData(Material, { where: { teacher: { id: teacherId } } });
+    @UseMiddleware(TeacherAuthMiddleware)
+    async getAllMaterials(@Ctx() { user }: TeacherContext): Promise<Material[] | undefined> {
+        let materials = getData(Material, { where: { teacher: { id: user.id } } });
         return materials;
     }
 
     @Mutation(() => MaterialResponseType)
+    @UseMiddleware(TeacherAuthMiddleware)
     async updateMaterial(
         @Arg('materialId') id: number,
         @Arg('data') data: UpdateMaterialType,
@@ -56,13 +61,15 @@ export class MaterialResolver {
     }
 
     @Mutation(() => Material)
-    async deleteMaterial(@Arg('teacherId') teacherId: number, @Arg('materialId') materialId: number): Promise<Material | null> {
-        return removeEntity(Material, undefined, { where: { id: materialId, teacher: { id: teacherId } } });
+    @UseMiddleware(TeacherAuthMiddleware)
+    async deleteMaterial(@Arg('materialId') materialId: number): Promise<Material | null> {
+        return removeEntity(Material, materialId);
     }
 
     @Query(() => Material)
-    async getMaterial(@Arg('teacherId') teacherId: number, @Arg('materialId') materialId: number): Promise<Material | undefined> {
-        let material = await findEntityOrThrow(Material, undefined, { where: { id: materialId, teacher: { id: teacherId } } });
+    @UseMiddleware(TeacherAuthMiddleware)
+    async getMaterial(@Arg('materialId') materialId: number): Promise<Material | undefined> {
+        let material = await findEntityOrThrow(Material, materialId);
         return material;
     }
 }
