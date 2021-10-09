@@ -7,6 +7,7 @@ import { createSchema } from './util/createSchema';
 import { __prod__ } from './constants';
 import { graphqlUploadExpress } from "graphql-upload";
 import dotenv from 'dotenv';
+import session from "express-session";
 
 const main = async () => {
     dotenv.config();
@@ -15,13 +16,29 @@ const main = async () => {
 
     await createConnection({ ...options, name: 'default' });
     const app = express();
+    let MemoryStore = session.MemoryStore;
+    app.set("trust proxy", 1);
     app.use(
         cors({
-            origin: '*',
+            origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
             credentials: true,
         }),
     );
-    // app.use("/", express.static(__dirname+'/../build'));
+    app.use(
+        session({
+            name: "qid",
+            store: new MemoryStore(),
+            cookie: {
+                maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+                httpOnly: true,
+                sameSite: "lax", // csrf
+                secure: true, // cookie only works in https
+            },
+            saveUninitialized: false,
+            secret: process.env.secret!,
+            resave: true,
+        })
+    );
 
     const apolloServer = new ApolloServer({
         schema: await createSchema(),

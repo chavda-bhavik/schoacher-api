@@ -35,7 +35,7 @@ export class Employer extends BaseEntity {
     })
     type: EmployerTypeEnum;
 
-    @Column({ nullable: true, type: 'text' })
+    @Column()
     password: string;
 
     @Field({ nullable: true })

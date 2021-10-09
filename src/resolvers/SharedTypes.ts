@@ -110,3 +110,12 @@ export class RequirementResponseType {
     @Field(() => Requirement, { nullable: true })
     entity?: Requirement;
 }
+
+@ObjectType()
+export class LoginResponse {
+    @Field({ nullable: true })
+    error?: string;
+
+    @Field({ nullable: true })
+    type?: 'teacher' | 'employer';
+}

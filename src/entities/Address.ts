@@ -1,10 +1,13 @@
 import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Employer } from '.';
+import * as Yup from 'yup';
 
 @ObjectType()
 @Entity()
 export class Address extends BaseEntity {
+    static validations = Yup.object().shape({});
+
     @Field()
     @PrimaryGeneratedColumn()
     id: number;
