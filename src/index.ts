@@ -8,6 +8,8 @@ import { __prod__ } from './constants';
 import { graphqlUploadExpress } from "graphql-upload";
 import dotenv from 'dotenv';
 import session from "express-session";
+let FileStore = require('session-file-store')(session);
+
 
 const main = async () => {
     dotenv.config();
@@ -16,7 +18,7 @@ const main = async () => {
 
     await createConnection({ ...options, name: 'default' });
     const app = express();
-    let MemoryStore = session.MemoryStore;
+
     app.set("trust proxy", 1);
     app.use(
         cors({
@@ -27,7 +29,7 @@ const main = async () => {
     app.use(
         session({
             name: "qid",
-            store: new MemoryStore(),
+            store: new FileStore(),
             cookie: {
                 maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
                 httpOnly: true,
@@ -35,8 +37,8 @@ const main = async () => {
                 secure: true, // cookie only works in https
             },
             saveUninitialized: false,
+            resave: false,
             secret: process.env.secret!,
-            resave: true,
         })
     );
 

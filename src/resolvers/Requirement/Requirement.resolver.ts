@@ -1,10 +1,12 @@
-import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 import { Employer, Requirement, SubStdBoard, Address, Application } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity, saveSubjects } from '@/util/typeorm';
 import { RequirementResponseType, SubStdBoardType } from '../SharedTypes';
 import { RequirementType } from './RequirementTypes';
 import { getConnection } from 'typeorm';
 import { RequirementTypeEnum } from '@/constants';
+import { TeacherAuthMiddleware } from '@/middlewares';
+import { MyContext } from '@/global';
 
 @Resolver(Requirement)
 export class RequirementResolver {
@@ -19,11 +21,16 @@ export class RequirementResolver {
     }
 
     @FieldResolver(() => Boolean)
-    applied() {
-        return true;
+    async applied(
+        @Root() requirement: Requirement,
+        @Ctx() { user }: MyContext
+    ) {
+        let applications = await Application.count({ where: { teacherId: user.id, requirementId: requirement.id } })
+        return applications > 0;
     }
 
     @Query(() => [Requirement])
+    @UseMiddleware(TeacherAuthMiddleware)
     async search(
         @Arg('city', { nullable: true }) city: string,
         @Arg('state', { nullable: true }) state: string,

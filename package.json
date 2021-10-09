@@ -7,7 +7,7 @@
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w && tspath",
-        "dev": "nodemon -r ./tsconfig-paths.js dist/index.js",
+        "dev": "nodemon -r ./tsconfig-paths.js --ignore ./sessions/ dist/index.js",
         "start": "node -r ./tsconfig-paths.js dist/index.js",
         "start2": "ts-node -r ./tsconfig-paths.js src/index.ts"
     },
@@ -30,6 +30,7 @@
         "jsonwebtoken": "^8.5.1",
         "pg": "^8.7.1",
         "reflect-metadata": "^0.1.13",
+        "session-file-store": "^1.5.0",
         "tsconfig-paths": "^3.11.0",
         "type-graphql": "^1.1.1",
         "typeorm": "^0.2.37",
@@ -43,6 +44,7 @@
         "@types/jest": "^27.0.1",
         "@types/jsonwebtoken": "^8.5.5",
         "@types/node": "^16.9.1",
+        "@types/session-file-store": "^1.2.2",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-plugin-import": "^2.24.2",
