@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { Arg, Mutation, Query, Resolver, FieldResolver, Root } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver, FieldResolver, Root, UseMiddleware, Ctx } from 'type-graphql';
 
 import { Employer, Teacher, SubStdBoard, Address } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity, saveSubjects, getData, removeEntity } from '@/util/typeorm';
@@ -7,6 +7,8 @@ import { EmployerResponseType, FieldError, SubStdBoardType } from '../SharedType
 import { RegisterEmployerType, UpdateEmployerType } from './EmployerTypes';
 import { deleteFile, uploadFile } from '@/util/upload';
 import constants, { RegularExpresssions } from '@/constants';
+import { EmployerAuthMiddleware } from '@/middlewares';
+import { EmployerContext } from '@/global';
 
 @Resolver(Employer)
 export class EmployerResolver {
@@ -45,26 +47,30 @@ export class EmployerResolver {
     }
 
     @Query(() => Employer)
-    async employer(@Arg('employerId') id: number): Promise<Employer | undefined> {
-        let employer = await findEntityOrThrow(Employer, id);
+    @UseMiddleware(EmployerAuthMiddleware)
+    async employer(
+        @Ctx() { user }: EmployerContext
+    ): Promise<Employer | undefined> {
+        let employer = await findEntityOrThrow(Employer, user.id);
         return employer;
     }
 
     @Mutation(() => EmployerResponseType)
+    @UseMiddleware(EmployerAuthMiddleware)
     async updateEmployerInfo(
-        @Arg('employerId') id: number,
+        @Ctx() { user }: EmployerContext,
         @Arg('data') data: UpdateEmployerType,
         @Arg('subjects', () => [SubStdBoardType], { nullable: true }) subjects: SubStdBoardType[],
     ): Promise<EmployerResponseType> {
-        let oldEmployer = await findEntityOrThrow(Employer, id);
+        let oldEmployer = await findEntityOrThrow(Employer, user.id);
         // uploading photo if available
         let employerData: Partial<Employer> = data;
         let address = null;
         if (data.address) {
-            await removeEntity(Address, undefined, { where: { employer_id: id } }, true, false);
+            await removeEntity(Address, oldEmployer.address_id, undefined, true, false);
             address = await createEntity(Address, {
                 ...data.address,
-                employer_id: id,
+                employer_id: user.id,
             });
             delete employerData.address;
             if (address.entity) {
@@ -78,7 +84,7 @@ export class EmployerResolver {
             } else employerData.photoUrl = constants.employerDefaultPhotoUrl;
         }
         // saving/updating entity
-        let employer = await updateEntity(Employer, id, employerData);
+        let employer = await updateEntity(Employer, user.id, employerData);
         // adding subjects to employer if available
         if (employer.entity && subjects) {
             await saveSubjects(employer.entity, 'employer_id', employer.entity.id, subjects);

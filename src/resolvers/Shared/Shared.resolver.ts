@@ -6,6 +6,7 @@ import { LoginResponse } from '../SharedTypes';
 import { MyContext } from '@/global';
 import { findEntityOrThrow } from '@/util/typeorm';
 import { Employer, Teacher } from '@/entities';
+import { LoginResponseTypeEnum } from '@/constants';
 
 @Resolver()
 export class SharedResolver {
@@ -16,18 +17,18 @@ export class SharedResolver {
         @Ctx() { req }: MyContext
     ): Promise<LoginResponse> {
         let user: Teacher | Employer;
-        let userType: 'teacher' | 'employer';
+        let userType: LoginResponseTypeEnum;
 
         user = await findEntityOrThrow(Teacher, undefined, {
             where: { email },
         }, false);
-        userType = 'teacher';
+        userType = LoginResponseTypeEnum.teacher;
 
         if (!user) {
             user = await findEntityOrThrow(Employer, undefined, {
                 where: { email }
             }, false);
-            userType = 'employer';
+            userType = LoginResponseTypeEnum.employer;
         }
 
         if (!user)
@@ -48,5 +49,13 @@ export class SharedResolver {
         return {
             type: userType
         };
+    }
+
+    @Mutation(() => Boolean)
+    async logout(
+        @Ctx() { req }: MyContext
+    ): Promise<boolean> {
+        await req.session.destroy(() => { });
+        return true;
     }
 }

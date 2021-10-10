@@ -36,7 +36,7 @@ export const EmployerAuthMiddleware: MiddlewareFn<EmployerContext> = async ({ co
                 throw new Error("You're Unauthorized!");
             else {
                 context.user = user;
-                next();
+                return next();
             }
         } else
             throw new Error("You're Unauthorized!");
