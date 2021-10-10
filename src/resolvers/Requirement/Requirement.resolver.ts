@@ -1,5 +1,5 @@
 import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
-import { Employer, Requirement, SubStdBoard, Address, Application } from '@/entities';
+import { Employer, Requirement, SubStdBoard, Address } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity, saveSubjects } from '@/util/typeorm';
 import { RequirementResponseType, SubStdBoardType } from '../SharedTypes';
 import { RequirementType } from './RequirementTypes';
@@ -119,13 +119,5 @@ export class RequirementResolver {
     async getRequirement(@Arg('employerId') employerId: number, @Arg('requirementId') requirementId: number): Promise<Requirement | undefined> {
         let requirement = await findEntityOrThrow(Requirement, undefined, { where: { id: requirementId, employer: { id: employerId } } });
         return requirement;
-    }
-
-    @Mutation(() => Boolean)
-    async toggleApplication(@Arg('teacherId') teacherId: number, @Arg('requirementId') requirementId: number): Promise<Boolean> {
-        let application = await findEntityOrThrow(Application, undefined, { where: { teacherId, requirementId } }, false);
-        if (application) await removeEntity(Application, application.id);
-        else await createEntity(Application, { teacherId, requirementId });
-        return !application;
     }
 }
