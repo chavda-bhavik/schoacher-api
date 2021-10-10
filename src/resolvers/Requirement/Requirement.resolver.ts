@@ -1,10 +1,12 @@
-import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
-import { Employer, Requirement, SubStdBoard, Address } from '@/entities';
+import { getConnection } from 'typeorm';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
+import { Employer, Requirement, SubStdBoard, Address, Application } from '@/entities';
 import { createEntity, findEntityOrThrow, updateEntity, getData, removeEntity, saveSubjects } from '@/util/typeorm';
 import { RequirementResponseType, SubStdBoardType } from '../SharedTypes';
 import { RequirementType } from './RequirementTypes';
-import { getConnection } from 'typeorm';
 import { RequirementTypeEnum } from '@/constants';
+import { EmployerAuthMiddleware, TeacherAuthMiddleware } from '@/middlewares';
+import { EmployerContext, TeacherContext } from '@/global';
 
 @Resolver(Requirement)
 export class RequirementResolver {
@@ -19,11 +21,17 @@ export class RequirementResolver {
     }
 
     @FieldResolver(() => Boolean)
-    applied() {
-        return true;
+    @UseMiddleware(TeacherAuthMiddleware)
+    async applied(
+        @Root() requirement: Requirement,
+        @Ctx() { user }: TeacherContext
+    ) {
+        let applications = await Application.count({ where: { teacherId: user.id, requirementId: requirement.id } })
+        return applications > 0;
     }
 
     @Query(() => [Requirement])
+    @UseMiddleware(TeacherAuthMiddleware)
     async search(
         @Arg('city', { nullable: true }) city: string,
         @Arg('state', { nullable: true }) state: string,
@@ -74,14 +82,15 @@ export class RequirementResolver {
     }
 
     @Mutation(() => RequirementResponseType)
+    @UseMiddleware(EmployerAuthMiddleware)
     async addRequirement(
-        @Arg('employerId') employerId: number,
+        @Ctx() { user }: EmployerContext,
         @Arg('data') data: RequirementType,
         @Arg('subjects', () => [SubStdBoardType], { nullable: true }) subjects: SubStdBoardType[],
     ): Promise<RequirementResponseType> {
         let requirement = await createEntity(Requirement, {
             ...data,
-            employer: { id: employerId },
+            employer: { id: user.id },
         });
         if (requirement.entity && subjects) {
             await saveSubjects(requirement.entity, 'requirement_id', requirement.entity.id, subjects);
@@ -90,12 +99,16 @@ export class RequirementResolver {
     }
 
     @Query(() => [Requirement])
-    async getAllRequirements(@Arg('employerId') employerId: number): Promise<Requirement[] | undefined> {
-        let requirements = getData(Requirement, { where: { employer: { id: employerId } } });
+    @UseMiddleware(EmployerAuthMiddleware)
+    async getAllRequirements(
+        @Ctx() { user }: EmployerContext
+    ): Promise<Requirement[] | undefined> {
+        let requirements = getData(Requirement, { where: { employer: { id: user.id } } });
         return requirements;
     }
 
     @Mutation(() => RequirementResponseType)
+    @UseMiddleware(EmployerAuthMiddleware)
     async updateRequirement(
         @Arg('requirementId') id: number,
         @Arg('data') data: RequirementType,
@@ -109,15 +122,19 @@ export class RequirementResolver {
     }
 
     @Mutation(() => Requirement)
-    async deleteRequirement(@Arg('employerId') employerId: number, @Arg('requirementId') requirementId: number): Promise<Requirement | null> {
-        await findEntityOrThrow(Requirement, undefined, { where: { id: requirementId, employer: { id: employerId } } });
+    @UseMiddleware(EmployerAuthMiddleware)
+    async deleteRequirement(
+        @Arg('requirementId') requirementId: number
+    ): Promise<Requirement | null> {
+        await findEntityOrThrow(Requirement, requirementId);
         await removeEntity(SubStdBoard, undefined, { where: { requirement_id: requirementId } });
         return removeEntity(Requirement, requirementId);
     }
 
     @Query(() => Requirement)
-    async getRequirement(@Arg('employerId') employerId: number, @Arg('requirementId') requirementId: number): Promise<Requirement | undefined> {
-        let requirement = await findEntityOrThrow(Requirement, undefined, { where: { id: requirementId, employer: { id: employerId } } });
+    async getRequirement(@Arg('requirementId') requirementId: number): Promise<Requirement | undefined> {
+        console.log(requirementId);
+        let requirement = await findEntityOrThrow(Requirement, requirementId);
         return requirement;
     }
 }

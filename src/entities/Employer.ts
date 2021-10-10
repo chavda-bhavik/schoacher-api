@@ -1,6 +1,6 @@
 import { RegularExpresssions } from '@/constants';
 import { Field, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import * as Yup from 'yup';
 import { Requirement, SubStdBoard } from '.';
 import { EmployerTypeEnum } from '../constants';
@@ -35,7 +35,7 @@ export class Employer extends BaseEntity {
     })
     type: EmployerTypeEnum;
 
-    @Column({ nullable: true, type: 'text' })
+    @Column()
     password: string;
 
     @Field({ nullable: true })
@@ -67,8 +67,8 @@ export class Employer extends BaseEntity {
     requirements?: Requirement[];
 
     @Field(() => Address, { nullable: true })
-    @OneToOne(() => Address, (addr) => addr.employer)
-    @JoinColumn({ name: 'address_id' })
+    // @OneToOne(() => Address, (addr) => addr.employer)
+    // @JoinColumn({ name: 'address_id' })
     address?: Address;
 
     @Column({ nullable: true })

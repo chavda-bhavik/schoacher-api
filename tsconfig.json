@@ -5,6 +5,8 @@
     "lib": ["dom", "es6", "es2017", "es2019", "esnext.asynciterable"],
     "sourceMap": true,
     "outDir": "./dist",
+    "baseUrl": "src",
+    "rootDir": "src",
     "removeComments": true,
     "strict": true,
     "noImplicitAny": true,
@@ -19,7 +21,6 @@
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    "baseUrl": "src",
     "paths": {
       "@/*": ["./*"]
     },

@@ -1,6 +1,5 @@
 import { buildSchema } from 'type-graphql';
 import {
-    UserResolver,
     TeacherResolver,
     QualificationResolver,
     ExperienceResolver,
@@ -12,12 +11,12 @@ import {
     EmployerResolver,
     RequirementResolver,
     ApplicationResolver,
+    SharedResolver
 } from '../resolvers';
 
 export const createSchema = async () => {
     return buildSchema({
         resolvers: [
-            UserResolver,
             TeacherResolver,
             QualificationResolver,
             ExperienceResolver,
@@ -29,6 +28,7 @@ export const createSchema = async () => {
             EmployerResolver,
             RequirementResolver,
             ApplicationResolver,
+            SharedResolver
         ],
         validate: false,
         dateScalarMode: 'isoDate',

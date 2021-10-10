@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
+import { Arg, Ctx, FieldResolver, Mutation, Query, Resolver, Root, UseMiddleware } from 'type-graphql';
 
 import { Employer, Experience, Material, Qualification, Teacher } from '@/entities';
 import { createEntity, findEntityOrThrow, getData, updateEntity } from '@/util/typeorm';
@@ -7,6 +7,8 @@ import { FieldError, TeacherResponseType } from '../SharedTypes';
 import { RegisterTeacherType, UpdateTeacherType } from './TeacherTypes';
 import { uploadFile, deleteFile } from '@/util/upload';
 import constants, { RegularExpresssions } from '@/constants';
+import { TeacherAuthMiddleware } from '@/middlewares';
+import { TeacherContext } from '@/global';
 
 @Resolver(Teacher)
 export class TeacherResolver {
@@ -50,14 +52,23 @@ export class TeacherResolver {
     }
 
     @Query(() => Teacher)
-    async teacher(@Arg('id') id: number): Promise<Teacher | undefined> {
-        let teacher = await findEntityOrThrow(Teacher, id);
-        return teacher;
+    @UseMiddleware(TeacherAuthMiddleware)
+    teacher(@Ctx() { user }: TeacherContext,): Teacher {
+        return user;
+    }
+
+    @Query(() => Teacher, { nullable: true })
+    teacherInfo(@Arg("teacherId") teacherId: number): Promise<Teacher | undefined> {
+        return findEntityOrThrow(Teacher, teacherId);
     }
 
     @Mutation(() => TeacherResponseType)
-    async updateTeacherInfo(@Arg('id') id: number, @Arg('data') data: UpdateTeacherType): Promise<TeacherResponseType> {
-        let teacher = await findEntityOrThrow(Teacher, id);
+    @UseMiddleware(TeacherAuthMiddleware)
+    async updateTeacherInfo(
+        @Ctx() { user }: TeacherContext,
+        @Arg('data') data: UpdateTeacherType
+    ): Promise<TeacherResponseType> {
+        let teacher = await findEntityOrThrow(Teacher, user.id);
         let teacherData: Partial<Teacher> = data;
         if (typeof data.photo !== 'undefined') {
             if (data.photo) {
@@ -67,6 +78,6 @@ export class TeacherResolver {
                 if (teacher.photoUrl !== constants.teacherDefaultPhotoUrl) await deleteFile(teacher.photoUrl);
             } else teacherData.photoUrl = constants.teacherDefaultPhotoUrl;
         }
-        return updateEntity(Teacher, id, teacherData);
+        return updateEntity(Teacher, user.id, teacherData);
     }
 }

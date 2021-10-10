@@ -30,8 +30,7 @@ export class Teacher extends BaseEntity {
     @Column({ type: 'text' })
     lastName: string;
 
-    @Field()
-    @Column({ nullable: true, type: 'text' })
+    @Column()
     password: string;
 
     @Field({ nullable: true })

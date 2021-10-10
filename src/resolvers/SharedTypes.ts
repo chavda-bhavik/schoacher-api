@@ -1,5 +1,10 @@
-import { Qualification, Teacher, User, Experience, Subject, Board, Standard, Material, Employer, Requirement } from '@/entities';
-import { Field, InputType, ObjectType } from 'type-graphql';
+import { Field, InputType, ObjectType, registerEnumType } from 'type-graphql';
+import { Qualification, Teacher, Experience, Subject, Board, Standard, Material, Employer, Requirement } from '@/entities';
+import { LoginResponseTypeEnum } from '@/constants';
+
+registerEnumType(LoginResponseTypeEnum, {
+    name: "LoginResponseTypeEnum"
+});
 
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
@@ -19,15 +24,6 @@ export class FieldError {
     field: string;
     @Field()
     message: string;
-}
-
-@ObjectType()
-export class ResponseType {
-    @Field(() => [FieldError], { nullable: true })
-    errors?: FieldError[];
-
-    @Field(() => User, { nullable: true })
-    entity?: User;
 }
 
 @ObjectType()
@@ -109,4 +105,13 @@ export class RequirementResponseType {
 
     @Field(() => Requirement, { nullable: true })
     entity?: Requirement;
+}
+
+@ObjectType()
+export class LoginResponse {
+    @Field({ nullable: true })
+    error?: string;
+
+    @Field(() => LoginResponseTypeEnum, { nullable: true })
+    type?: LoginResponseTypeEnum;
 }

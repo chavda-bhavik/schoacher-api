@@ -1,8 +1,10 @@
-import { Arg, Query, Resolver, Mutation, FieldResolver, Root } from 'type-graphql';
+import { Arg, Query, Resolver, Mutation, FieldResolver, Root, UseMiddleware, Ctx } from 'type-graphql';
 
 import { Application, Teacher, Requirement, Employer } from '@/entities';
 import { findEntityOrThrow, removeEntity, createEntity } from '@/util/typeorm';
 import { getConnection } from 'typeorm';
+import { EmployerAuthMiddleware, TeacherAuthMiddleware } from '@/middlewares';
+import { EmployerContext, TeacherContext } from '@/global';
 
 @Resolver(Application)
 export class ApplicationResolver {
@@ -17,9 +19,10 @@ export class ApplicationResolver {
     }
 
     @Query(() => [Application])
+    @UseMiddleware(EmployerAuthMiddleware)
     async applications(
         @Arg('requirementId', { nullable: true }) requirementId: number,
-        @Arg('employerId') employerId: number,
+        @Ctx() { user }: EmployerContext,
     ): Promise<Application[]> {
         let query = await getConnection()
             .getRepository(Application)
@@ -27,7 +30,7 @@ export class ApplicationResolver {
             .innerJoin(Requirement, 'req', 'app.requirementId = req.id')
             .innerJoin(Employer, 'emp', 'req.employerId = emp.id');
 
-        query.where('emp.id = :empId', { empId: employerId });
+        query.where('emp.id = :empId', { empId: user.id });
         if (requirementId) {
             query.andWhere('req.id = :reqId', { reqId: requirementId });
         }
@@ -35,10 +38,14 @@ export class ApplicationResolver {
     }
 
     @Mutation(() => Boolean)
-    async toggleApplication(@Arg('teacherId') teacherId: number, @Arg('requirementId') requirementId: number): Promise<Boolean> {
-        let application = await findEntityOrThrow(Application, undefined, { where: { teacherId, requirementId } }, false);
+    @UseMiddleware(TeacherAuthMiddleware)
+    async toggleApplication(
+        @Ctx() { user }: TeacherContext,
+        @Arg('requirementId') requirementId: number
+    ): Promise<Boolean> {
+        let application = await findEntityOrThrow(Application, undefined, { where: { teacherId: user.id, requirementId } }, false);
         if (application) await removeEntity(Application, application.id);
-        else await createEntity(Application, { teacherId, requirementId });
+        else await createEntity(Application, { teacherId: user.id, requirementId });
         return !application;
     }
 }
