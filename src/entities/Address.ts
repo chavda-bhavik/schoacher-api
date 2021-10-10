@@ -32,7 +32,9 @@ export class Address extends BaseEntity {
     @Column({ type: 'numeric' })
     pincode: number;
 
-    @OneToOne(() => Employer, (emp) => emp.address)
+    @OneToOne(() => Employer, (emp) => emp.address, {
+        cascade: true
+    })
     @JoinColumn({ name: 'employer_id' })
     employer: Employer;
 

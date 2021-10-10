@@ -21,6 +21,7 @@ export class RequirementResolver {
     }
 
     @FieldResolver(() => Boolean)
+    @UseMiddleware(TeacherAuthMiddleware)
     async applied(
         @Root() requirement: Requirement,
         @Ctx() { user }: TeacherContext
@@ -132,6 +133,7 @@ export class RequirementResolver {
 
     @Query(() => Requirement)
     async getRequirement(@Arg('requirementId') requirementId: number): Promise<Requirement | undefined> {
+        console.log(requirementId);
         let requirement = await findEntityOrThrow(Requirement, requirementId);
         return requirement;
     }

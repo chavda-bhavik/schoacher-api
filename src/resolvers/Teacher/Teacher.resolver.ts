@@ -57,6 +57,11 @@ export class TeacherResolver {
         return user;
     }
 
+    @Query(() => Teacher, { nullable: true })
+    teacherInfo(@Arg("teacherId") teacherId: number): Promise<Teacher | undefined> {
+        return findEntityOrThrow(Teacher, teacherId);
+    }
+
     @Mutation(() => TeacherResponseType)
     @UseMiddleware(TeacherAuthMiddleware)
     async updateTeacherInfo(
