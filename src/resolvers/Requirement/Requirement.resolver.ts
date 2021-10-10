@@ -127,12 +127,4 @@ export class RequirementResolver {
         let requirement = await findEntityOrThrow(Requirement, undefined, { where: { id: requirementId, employer: { id: employerId } } });
         return requirement;
     }
-
-    @Mutation(() => Boolean)
-    async toggleApplication(@Arg('teacherId') teacherId: number, @Arg('requirementId') requirementId: number): Promise<Boolean> {
-        let application = await findEntityOrThrow(Application, undefined, { where: { teacherId, requirementId } }, false);
-        if (application) await removeEntity(Application, application.id);
-        else await createEntity(Application, { teacherId, requirementId });
-        return !application;
-    }
 }

@@ -8,4 +8,4 @@ export { SubStdBoardResolver } from './SubStdBoard/SubStdBoard.resolver';
 export { MaterialResolver } from './Material/Material.resolver';
 export { EmployerResolver } from './Employer/Employer.resolver';
 export { RequirementResolver } from './Requirement/Requirement.resolver';
-export { SharedResolver } from './Shared/Shared.resolver';
+export { ApplicationResolver } from './Application/Application.resolver';
