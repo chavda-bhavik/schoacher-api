@@ -1,14 +1,14 @@
 import 'reflect-metadata';
-import express from 'express';
-import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import { ApolloServer } from 'apollo-server-express';
+import { graphqlUploadExpress } from 'graphql-upload';
 import { createConnection, getConnectionOptions } from 'typeorm';
+
 import { createSchema } from './util/createSchema';
 import { __prod__ } from './constants';
-import { graphqlUploadExpress } from 'graphql-upload';
-import dotenv from 'dotenv';
-import session from 'express-session';
-let FileStore = require('session-file-store')(session);
 
 const main = async () => {
     dotenv.config();
@@ -25,21 +25,7 @@ const main = async () => {
             credentials: true,
         }),
     );
-    app.use(
-        session({
-            name: 'qid',
-            store: new FileStore(),
-            cookie: {
-                maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
-                httpOnly: true,
-                sameSite: 'none', // csrf
-                secure: true, // cookie only works in https
-            },
-            saveUninitialized: false,
-            resave: false,
-            secret: process.env.secret!,
-        }),
-    );
+    app.use(cookieParser());
 
     const apolloServer = new ApolloServer({
         schema: await createSchema(),
