@@ -25,6 +25,14 @@ const registerTeacherMutation = `
         }
     }
 `;
+const loginTeacherMutation = `
+    mutation LoginMutation($password: String!, $email: String!) {
+        login(password: $password, email: $email) {
+            error
+            type
+        }
+    }
+`;
 
 describe('teacher operations', () => {
     const registerTeacherData: Partial<Teacher> = {
@@ -52,37 +60,22 @@ describe('teacher operations', () => {
         });
     });
 
-    // it('should get all journal entries for the date month', async () => {
-    //     let response = await gCall({
-    //         source: allJournalsQuery,
-    //         variableValues: {
-    //             date
-    //         }
-    //     });
-    //     expect(response && response?.data?.getAllJournals.length).toBeGreaterThan(0);
-    // });
-    // it('should get single journal', async () => {
-    //     let response = await gCall({
-    //         source: getSingleJournal,
-    //         variableValues: {
-    //             date: date
-    //         }
-    //     });
-    //     expect(response).toMatchObject({
-    //         data: {
-    //             journal: {
-    //                 actions: journal.actions
-    //             }
-    //         }
-    //     });
-    // });
-    // it("should not get wrong journal", async () => {
-    //     let response = await gCall({
-    //         source: getSingleJournal,
-    //         variableValues: {
-    //             date: "01/01/2021"
-    //         }
-    //     });
-    //     expect(response?.data).toBeNull();
-    // });
+    it('should login teacher', async () => {
+        let response = await gCall({
+            source: loginTeacherMutation,
+            variableValues: {
+                password: registerTeacherData.password,
+                email: registerTeacherData.email,
+            },
+        });
+        console.log(response);
+        expect(response).toMatchObject({
+            data: {
+                login: {
+                    error: null,
+                    type: 'teacher',
+                },
+            },
+        });
+    });
 });
