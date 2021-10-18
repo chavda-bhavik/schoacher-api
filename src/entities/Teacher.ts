@@ -1,4 +1,4 @@
-import constants, { RegularExpresssions } from '@/constants';
+import constants, { RegularExpresssions } from '../constants';
 import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import * as Yup from 'yup';
