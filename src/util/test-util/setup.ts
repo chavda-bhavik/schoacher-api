@@ -1,3 +1,7 @@
 import { testConn } from './testConn';
 
-testConn(true).then(() => process.exit());
+export default async () => {
+    await testConn(true)
+    console.log('\nhello, this is just before tests start running');
+};
+

@@ -1,3 +1,5 @@
+import { CookieOptions } from 'express';
+
 export const __prod__ = process.env.NODE_ENV === 'production';
 export const RegularExpresssions = {
     email: /.+@.+\..+/,
@@ -16,11 +18,18 @@ export enum RequirementTypeEnum {
 }
 export enum LoginResponseTypeEnum {
     teacher = 'teacher',
-    employer = 'employer'
+    employer = 'employer',
 }
 const constants = {
     teacherDefaultPhotoUrl: 'https://res.cloudinary.com/dkuoqamig/image/upload/v1631936323/pxxydj4zsfuqez71im2i.jpg',
     employerDefaultPhotoUrl: 'https://source.unsplash.com/umhyDLYKfLM/350x250',
+};
+
+export const cookieConfig: CookieOptions = {
+    secure: true,
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    sameSite: 'none',
 };
 
 export default constants;
