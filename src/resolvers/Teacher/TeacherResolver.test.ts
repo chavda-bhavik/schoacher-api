@@ -1,11 +1,21 @@
-import faker from 'faker';
+import { createTestClient, TestQuery, TestSetOptions } from 'apollo-server-integration-testing';
 import { Connection } from 'typeorm';
-import { Teacher } from '../../entities';
-import { testConn, gCall } from '../../util/test-util';
+import faker from 'faker';
 
-let conn: Connection;
+import { Teacher } from '../../entities';
+import { JohnDoeTeacherJWTToken } from '../../util/test-util';
+import { createApolloServer, testConn } from '../../util/test-util';
+
+let conn: Connection, query: TestQuery, mutate: TestQuery, setOptions: TestSetOptions;
 beforeAll(async () => {
     conn = await testConn();
+    const apolloServer = await createApolloServer();
+    let client = createTestClient({
+        apolloServer,
+    });
+    mutate = client.mutate;
+    query = client.query;
+    setOptions = client.setOptions;
 });
 afterAll(async () => {
     await conn.close();
@@ -33,6 +43,15 @@ const loginTeacherMutation = `
         }
     }
 `;
+const teacherInfoQuery = `
+    query Query {
+        teacher {
+            id
+            firstName
+            lastName
+        }
+    }
+`;
 
 describe('teacher operations', () => {
     const registerTeacherData: Partial<Teacher> = {
@@ -43,12 +62,12 @@ describe('teacher operations', () => {
     };
 
     it('should register new teacher', async () => {
-        let response = await gCall({
-            source: registerTeacherMutation,
-            variableValues: {
+        let response = await mutate(registerTeacherMutation, {
+            variables: {
                 data: registerTeacherData,
             },
         });
+
         expect(response).toMatchObject({
             data: {
                 registerTeacher: {
@@ -61,19 +80,36 @@ describe('teacher operations', () => {
     });
 
     it('should login teacher', async () => {
-        let response = await gCall({
-            source: loginTeacherMutation,
-            variableValues: {
-                password: registerTeacherData.password,
-                email: registerTeacherData.email,
+        let response = await mutate(loginTeacherMutation, {
+            variables: {
+                password: 'john@123',
+                email: 'johndoe@gmail.com',
             },
         });
-        console.log(response);
         expect(response).toMatchObject({
             data: {
                 login: {
                     error: null,
                     type: 'teacher',
+                },
+            },
+        });
+    });
+
+    it('should get teacher info', async () => {
+        setOptions({
+            request: {
+                cookies: {
+                    token: JohnDoeTeacherJWTToken,
+                },
+            },
+        });
+        let response = await query(teacherInfoQuery);
+        expect(response).toMatchObject({
+            data: {
+                teacher: {
+                    firstName: 'john',
+                    lastName: 'doe',
                 },
             },
         });

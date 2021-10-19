@@ -1,0 +1,2 @@
+export const JohnDoeTeacherJWTToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidHlwZSI6InRlYWNoZXIiLCJpYXQiOjE2MzQ2Mzk4MjF9.r6u8YIQKMsF5YYzyYSo7iRPpDcOxp4ziERd2D54q4mY';

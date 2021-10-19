@@ -10,8 +10,7 @@
         "dev": "nodemon -r ./tsconfig-paths.js --ignore ./sessions/ dist/index.js",
         "start": "node -r ./tsconfig-paths.js dist/index.js",
         "start2": "ts-node -r ./tsconfig-paths.js src/index.ts",
-        "db:setup": "ts-node ./src/util/test-util/setup.ts",
-        "test": "yarn db:setup && jest"
+        "test": "jest"
     },
     "repository": {
         "type": "git",
@@ -49,6 +48,7 @@
         "@types/jest": "^27.0.2",
         "@types/jsonwebtoken": "^8.5.5",
         "@types/node": "^16.9.1",
+        "apollo-server-integration-testing": "^3.0.0",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-plugin-import": "^2.24.2",
