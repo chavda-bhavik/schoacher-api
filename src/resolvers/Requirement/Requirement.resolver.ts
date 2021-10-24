@@ -22,11 +22,8 @@ export class RequirementResolver {
 
     @FieldResolver(() => Boolean)
     @UseMiddleware(TeacherAuthMiddleware)
-    async applied(
-        @Root() requirement: Requirement,
-        @Ctx() { user }: TeacherContext
-    ) {
-        let applications = await Application.count({ where: { teacherId: user.id, requirementId: requirement.id } })
+    async applied(@Root() requirement: Requirement, @Ctx() { user }: TeacherContext) {
+        let applications = await Application.count({ where: { teacherId: user.id, requirementId: requirement.id } });
         return applications > 0;
     }
 
@@ -94,15 +91,13 @@ export class RequirementResolver {
         });
         if (requirement.entity && subjects) {
             await saveSubjects(requirement.entity, 'requirement_id', requirement.entity.id, subjects);
-        }
+        } else throw new Error('Subjects are required!');
         return requirement;
     }
 
     @Query(() => [Requirement])
     @UseMiddleware(EmployerAuthMiddleware)
-    async getAllRequirements(
-        @Ctx() { user }: EmployerContext
-    ): Promise<Requirement[] | undefined> {
+    async getAllRequirements(@Ctx() { user }: EmployerContext): Promise<Requirement[] | undefined> {
         let requirements = getData(Requirement, { where: { employer: { id: user.id } } });
         return requirements;
     }
@@ -123,9 +118,7 @@ export class RequirementResolver {
 
     @Mutation(() => Requirement)
     @UseMiddleware(EmployerAuthMiddleware)
-    async deleteRequirement(
-        @Arg('requirementId') requirementId: number
-    ): Promise<Requirement | null> {
+    async deleteRequirement(@Arg('requirementId') requirementId: number): Promise<Requirement | null> {
         await findEntityOrThrow(Requirement, requirementId);
         await removeEntity(SubStdBoard, undefined, { where: { requirement_id: requirementId } });
         return removeEntity(Requirement, requirementId);
@@ -133,7 +126,6 @@ export class RequirementResolver {
 
     @Query(() => Requirement)
     async getRequirement(@Arg('requirementId') requirementId: number): Promise<Requirement | undefined> {
-        console.log(requirementId);
         let requirement = await findEntityOrThrow(Requirement, requirementId);
         return requirement;
     }

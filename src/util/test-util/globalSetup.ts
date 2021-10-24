@@ -1,6 +1,6 @@
-import { EmployerTypeEnum } from '../../constants';
+import { EmployerTypeEnum, RequirementTypeEnum } from '../../constants';
 import { ConnectionOptions, getConnectionOptions, createConnection } from 'typeorm';
-import { Teacher, Employer, Qualification, Board, Standard, Subject, Experience, SubStdBoard } from '../../entities';
+import { Teacher, Employer, Qualification, Board, Standard, Subject, Experience, SubStdBoard, Requirement, Address } from '../../entities';
 
 export default async () => {
     const options: ConnectionOptions = await getConnectionOptions('test');
@@ -19,6 +19,34 @@ export default async () => {
     await qb.insert().into(Standard).values(StandardsData).execute();
     await qb.insert().into(Experience).values(ExperienceData).execute();
     await qb.insert().into(SubStdBoard).values(ExperienceSubStdBoardData).execute();
+    await qb.insert().into(Requirement).values(requirementsData).execute();
+    await qb.insert().into(Address).values(addressData).execute();
+    // adding subjects for each requirement
+    await qb
+        .insert()
+        .into(SubStdBoard)
+        .values(requirementSubStdBoardData.map((req) => ({ ...req, requirement_id: 1 })))
+        .execute();
+    await qb
+        .insert()
+        .into(SubStdBoard)
+        .values(requirementSubStdBoardData.map((req) => ({ ...req, requirement_id: 2 })))
+        .execute();
+    await qb
+        .insert()
+        .into(SubStdBoard)
+        .values(requirementSubStdBoardData.map((req) => ({ ...req, requirement_id: 3 })))
+        .execute();
+    await qb
+        .insert()
+        .into(SubStdBoard)
+        .values(requirementSubStdBoardData.map((req) => ({ ...req, requirement_id: 4 })))
+        .execute();
+    await qb
+        .insert()
+        .into(SubStdBoard)
+        .values(requirementSubStdBoardData.map((req) => ({ ...req, requirement_id: 5 })))
+        .execute();
 };
 
 let teacherData: Partial<Teacher>[] = [
@@ -181,5 +209,97 @@ let employerData: Partial<Employer>[] = [
         email: 'contact@saraswati.com',
         type: EmployerTypeEnum.School,
         password: '$2a$10$/tqHdydBfss8ndw5sJzFuOrTUKmgC6UB3ifkpbIZ0vTND4Y/fFHEy', // saraswati@123
+    },
+];
+let addressData: Partial<Address>[] = [
+    {
+        street1: 'adfasdf asf',
+        street2: 'werzxdr qwe qwe qwe qwe',
+        state: 'Gujarat',
+        city: 'Surat',
+        pincode: 395008,
+        employer_id: 1,
+    },
+    {
+        street1: 'wer we werdf asf',
+        street2: 'werzx asdf qwe qwe',
+        state: 'Gujarat',
+        city: 'Rajkot',
+        pincode: 392008,
+        employer_id: 2,
+    },
+];
+let requirementSubStdBoardData: Partial<SubStdBoard>[] = [
+    {
+        subjectId: 1,
+        standardId: 1,
+        boardId: 1,
+    },
+    {
+        subjectId: 2,
+        standardId: 1,
+        boardId: 1,
+    },
+    {
+        subjectId: 3,
+        standardId: 2,
+        boardId: 1,
+    },
+];
+let requirementsData: Partial<Requirement>[] = [
+    {
+        employerId: 1,
+        startTime: '2021-10-24T02:00:27.001Z',
+        endTime: '2021-10-24T07:30:27.001Z',
+        description: 'asdf asdf asdf asdf asdf',
+        qualification: 'Master Degree',
+        salaryFrom: 20000,
+        salaryUpTo: 50000,
+        title: 'asdf assddf assdfwer ddqwer zdwer',
+        type: RequirementTypeEnum.PART_TIME,
+    },
+    {
+        employerId: 1,
+        startTime: '2021-10-24T07:30:27.001Z',
+        endTime: '2021-10-24T12:30:27.001Z',
+        description: 'asdf asdf asdf asdf asdf',
+        qualification: 'Master Degree',
+        salaryFrom: 15000,
+        salaryUpTo: 40000,
+        title: 'asdf assddf assdfwer ddqwer zdwer',
+        type: RequirementTypeEnum.FULL_TIME,
+    },
+    {
+        employerId: 1,
+        startTime: '2021-10-24T07:30:27.001Z',
+        endTime: '2021-10-24T12:30:27.001Z',
+        description: 'asdf asdf asdf asdf asdf',
+        qualification: 'Master Degree',
+        salaryFrom: 50000,
+        salaryUpTo: 70000,
+        title: 'asdf assddf assdfwer ddqwer zdwer',
+        type: RequirementTypeEnum.FULL_TIME,
+    },
+    {
+        employerId: 2,
+        startTime: '2021-10-24T02:00:27.001Z',
+        endTime: '2021-10-24T07:30:27.001Z',
+        description: 'asdf asdf asdf asdf asdf',
+        qualification: 'Master Degree',
+        salaryFrom: 20000,
+        salaryUpTo: 30000,
+        title: 'asdf assddf assdfwer ddqwer zdwer',
+        type: RequirementTypeEnum.PART_TIME,
+    },
+    {
+        employerId: 2,
+        startTime: '2021-10-24T02:00:27.001Z',
+        endTime: '2021-10-24T07:30:27.001Z',
+        description: 'asdf asdf asdf asdf asdf',
+        qualification: 'Master Degree',
+        salaryFrom: 15000,
+        salaryUpTo: 30000,
+        title: 'asdf assddf assdfwer ddqwer zdwer',
+        type: RequirementTypeEnum.FULL_TIME,
     },
 ];
