@@ -39,14 +39,6 @@ const registerTeacherMutation = `
         }
     }
 `;
-const loginTeacherMutation = `
-    mutation LoginMutation($password: String!, $email: String!) {
-        login(password: $password, email: $email) {
-            error
-            type
-        }
-    }
-`;
 const teacherInfoQuery = `
     query Query {
         teacher {
@@ -100,23 +92,6 @@ describe('teacher operations', () => {
                     entity: {
                         email: registerTeacherData.email,
                     },
-                },
-            },
-        });
-    });
-
-    it('should login teacher', async () => {
-        let response = await mutate(loginTeacherMutation, {
-            variables: {
-                password: 'john@123',
-                email: 'johndoe@gmail.com',
-            },
-        });
-        expect(response).toMatchObject({
-            data: {
-                login: {
-                    error: null,
-                    type: 'teacher',
                 },
             },
         });

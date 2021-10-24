@@ -29,13 +29,6 @@ let teacherData: Partial<Teacher>[] = [
         password: '$2a$12$G.8US.fY2TvLAkgvQkIaRe5Yj3ujd4LWhwb8tyz98/LVSqqIy4AKW', // john@123
     },
 ];
-let employerData: Partial<Employer>[] = [
-    {
-        name: 'XYZ School',
-        email: 'xyz@gmail.com',
-        password: '$2a$12$DqTMH3E8j4YOSobwy1boY.7.ZsmUml1Ha.aACNs7BvVNdX4X7H4Ue',
-    },
-];
 let qualificationsData: Partial<Qualification>[] = [
     {
         start: '2021-09-18T05:56:23.926Z',
@@ -172,5 +165,21 @@ let ExperienceData: Partial<Experience>[] = [
             'At vel cum velit. Debitis soluta sunt. Porro cum aut eum quia temporibus. Voluptas quia placeat adipisci est saepe dolorem eum rerum dolorem.',
         type: EmployerTypeEnum.School,
         teacherId: 1,
+    },
+];
+
+// employer
+let employerData: Partial<Employer>[] = [
+    {
+        name: 'XYZ School',
+        email: 'xyz@gmail.com',
+        type: EmployerTypeEnum.School,
+        password: '$2a$12$DqTMH3E8j4YOSobwy1boY.7.ZsmUml1Ha.aACNs7BvVNdX4X7H4Ue', // xyz@123
+    },
+    {
+        name: 'Saraswati Vidhyalaya',
+        email: 'contact@saraswati.com',
+        type: EmployerTypeEnum.School,
+        password: '$2a$10$/tqHdydBfss8ndw5sJzFuOrTUKmgC6UB3ifkpbIZ0vTND4Y/fFHEy', // saraswati@123
     },
 ];

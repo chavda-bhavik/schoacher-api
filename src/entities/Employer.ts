@@ -69,7 +69,7 @@ export class Employer extends BaseEntity {
     @Field(() => Address, { nullable: true })
     // @OneToOne(() => Address, (addr) => addr.employer)
     // @JoinColumn({ name: 'address_id' })
-    address?: Address;
+    address?: Partial<Address>;
 
     @Column({ nullable: true })
     address_id: number;
