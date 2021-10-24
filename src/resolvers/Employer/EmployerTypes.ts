@@ -44,9 +44,6 @@ export class AddressType {
 @InputType()
 export class UpdateEmployerType {
     @Field({ nullable: true })
-    name?: string;
-
-    @Field({ nullable: true })
     mobile1?: string;
 
     @Field({ nullable: true })

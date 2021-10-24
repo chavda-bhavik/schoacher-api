@@ -9,7 +9,8 @@
         "watch": "tsc -w && tspath",
         "dev": "nodemon -r ./tsconfig-paths.js --ignore ./sessions/ dist/index.js",
         "start": "node -r ./tsconfig-paths.js dist/index.js",
-        "start2": "ts-node -r ./tsconfig-paths.js src/index.ts"
+        "start2": "ts-node -r ./tsconfig-paths.js src/index.ts",
+        "test": "jest --runInBand --detectOpenHandles"
     },
     "repository": {
         "type": "git",
@@ -26,6 +27,8 @@
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
+        "express-session": "^1.17.2",
+        "faker": "^5.5.3",
         "graphql": "^15.5.3",
         "graphql-upload": "^12.0.0",
         "jsonwebtoken": "^8.5.1",
@@ -39,14 +42,19 @@
     "devDependencies": {
         "@types/bcryptjs": "^2.4.2",
         "@types/express": "^4.17.13",
+        "@types/express-session": "^1.17.4",
+        "@types/faker": "^5.5.9",
         "@types/graphql-upload": "^8.0.7",
-        "@types/jest": "^27.0.1",
+        "@types/jest": "^27.0.2",
         "@types/jsonwebtoken": "^8.5.5",
         "@types/node": "^16.9.1",
+        "apollo-server-integration-testing": "^3.0.0",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.2.1",
         "eslint-plugin-import": "^2.24.2",
+        "jest": "^27.3.0",
         "prettier": "^2.4.0",
+        "ts-jest": "^27.0.7",
         "ts-node": "^10.2.1",
         "tspath": "^1.3.7",
         "typescript": "^4.4.3"

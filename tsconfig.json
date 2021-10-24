@@ -24,13 +24,13 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "types": ["node"],
+    "types": ["node", "reflect-metadata", "jest"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "./src/**/*.test.ts"],
   "include": ["./src/**/*.ts"]
 }

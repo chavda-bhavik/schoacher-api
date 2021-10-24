@@ -1,4 +1,4 @@
-import { RegularExpresssions } from '@/constants';
+import { RegularExpresssions } from '../constants';
 import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import * as Yup from 'yup';
@@ -69,7 +69,7 @@ export class Employer extends BaseEntity {
     @Field(() => Address, { nullable: true })
     // @OneToOne(() => Address, (addr) => addr.employer)
     // @JoinColumn({ name: 'address_id' })
-    address?: Address;
+    address?: Partial<Address>;
 
     @Column({ nullable: true })
     address_id: number;

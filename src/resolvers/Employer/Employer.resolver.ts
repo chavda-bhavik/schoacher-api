@@ -48,9 +48,7 @@ export class EmployerResolver {
 
     @Query(() => Employer)
     @UseMiddleware(EmployerAuthMiddleware)
-    async employer(
-        @Ctx() { user }: EmployerContext
-    ): Promise<Employer | undefined> {
+    async employer(@Ctx() { user }: EmployerContext): Promise<Employer | undefined> {
         let employer = await findEntityOrThrow(Employer, user.id);
         return employer;
     }

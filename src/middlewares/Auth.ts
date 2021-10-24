@@ -19,7 +19,7 @@ export const TeacherAuthMiddleware: MiddlewareFn<TeacherContext> = async ({ cont
             }
         } else throw new Error("You're Unauthorized!");
     } catch (err) {
-        throw new Error("You're Unauthorized!");
+        throw new Error((err as Error).message);
     }
 };
 

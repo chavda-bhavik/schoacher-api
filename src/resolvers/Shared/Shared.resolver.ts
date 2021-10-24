@@ -11,7 +11,7 @@ import { LoginResponseTypeEnum, cookieConfig } from '@/constants';
 @Resolver()
 export class SharedResolver {
     @Mutation(() => LoginResponse)
-    async login(@Arg('email') email: string, @Arg('password') password: string, @Ctx() { res }: MyContext): Promise<LoginResponse> {
+    async login(@Arg('email') email: string, @Arg('password') password: string, @Ctx() ctx: MyContext): Promise<LoginResponse> {
         let user: Teacher | Employer;
         let userType: LoginResponseTypeEnum;
 
@@ -49,7 +49,7 @@ export class SharedResolver {
             };
 
         let token = sign({ id: user.id, type: userType }, process.env.jwt_secret!);
-        res.cookie('token', token, cookieConfig);
+        if (ctx && ctx.res) ctx.res.cookie('token', token, cookieConfig);
 
         return {
             type: userType,

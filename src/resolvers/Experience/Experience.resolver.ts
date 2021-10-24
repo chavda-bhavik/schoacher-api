@@ -20,13 +20,14 @@ export class ExperienceResolver {
         @Arg('data') data: ExperienceType,
         @Arg('subjects', () => [SubStdBoardType], { nullable: true }) subjects: SubStdBoardType[],
     ): Promise<ExperienceResponseType> {
+        if (data.currentlyWorking) data.end = undefined;
         let experience = await createEntity(Experience, {
             ...data,
             teacher: { id: user.id },
         });
         if (experience.entity && subjects) {
             await saveSubjects(experience.entity, 'experience_id', experience.entity.id, subjects);
-        }
+        } else throw new Error('Subjects are required!');
         return experience;
     }
 
@@ -44,6 +45,7 @@ export class ExperienceResolver {
         @Arg('data') data: ExperienceType,
         @Arg('subjects', () => [SubStdBoardType], { nullable: true }) subjects: SubStdBoardType[],
     ): Promise<ExperienceResponseType> {
+        if (data.currentlyWorking) data.end = undefined;
         let experience = await updateEntity(Experience, id, data);
         if (experience.entity && subjects) {
             await saveSubjects(experience.entity, 'experience_id', experience.entity.id, subjects);
