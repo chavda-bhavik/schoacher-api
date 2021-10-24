@@ -1,5 +1,25 @@
+import { EmployerTypeEnum } from '../../constants';
 import { ConnectionOptions, getConnectionOptions, createConnection } from 'typeorm';
-import { Teacher, Employer, Qualification } from '../../entities';
+import { Teacher, Employer, Qualification, Board, Standard, Subject, Experience, SubStdBoard } from '../../entities';
+
+export default async () => {
+    const options: ConnectionOptions = await getConnectionOptions('test');
+    let conn = await createConnection({
+        ...options,
+        synchronize: true,
+        dropSchema: true,
+        name: 'test',
+    });
+    let qb = await conn.createQueryBuilder();
+    await qb.insert().into(Teacher).values(teacherData).execute();
+    await qb.insert().into(Employer).values(employerData).execute();
+    await qb.insert().into(Qualification).values(qualificationsData).execute();
+    await qb.insert().into(Board).values(BoardsData).execute();
+    await qb.insert().into(Subject).values(SubjectsData).execute();
+    await qb.insert().into(Standard).values(StandardsData).execute();
+    await qb.insert().into(Experience).values(ExperienceData).execute();
+    await qb.insert().into(SubStdBoard).values(ExperienceSubStdBoardData).execute();
+};
 
 let teacherData: Partial<Teacher>[] = [
     {
@@ -36,17 +56,121 @@ let qualificationsData: Partial<Qualification>[] = [
         teacherId: 1,
     },
 ];
-
-export default async () => {
-    const options: ConnectionOptions = await getConnectionOptions('test');
-    let conn = await createConnection({
-        ...options,
-        synchronize: true,
-        dropSchema: true,
-        name: 'test',
-    });
-    let qb = await conn.createQueryBuilder();
-    await qb.insert().into(Teacher).values(teacherData).execute();
-    await qb.insert().into(Employer).values(employerData).execute();
-    await qb.insert().into(Qualification).values(qualificationsData).execute();
-};
+let BoardsData: Partial<Board>[] = [
+    {
+        label: 'Gujarat Secondary & Higher Secondary Education Board',
+        value: 'GSEB',
+    },
+    {
+        label: 'National Council of Education Reasearch & Training',
+        value: 'NCERT',
+    },
+];
+let StandardsData: Partial<Standard>[] = [
+    {
+        label: 'Senior Kinder Garden',
+        value: 'SKG',
+    },
+    {
+        label: 'Junior Kinder Garden',
+        value: 'JKG',
+    },
+    {
+        label: 'Nursery',
+        value: 'Nursery',
+    },
+    {
+        label: '1',
+        value: '1',
+    },
+    {
+        label: '2',
+        value: '2',
+    },
+    {
+        label: '3',
+        value: '3',
+    },
+    {
+        label: '4',
+        value: '4',
+    },
+    {
+        label: '5',
+        value: '5',
+    },
+    {
+        label: '6',
+        value: '6',
+    },
+    {
+        label: '7',
+        value: '7',
+    },
+    {
+        label: '8',
+        value: '8',
+    },
+    {
+        label: '9',
+        value: '9',
+    },
+    {
+        label: '10',
+        value: '10',
+    },
+];
+let SubjectsData: Partial<Subject>[] = [
+    {
+        label: 'Gujarati',
+        value: 'Gujarati',
+    },
+    {
+        label: 'Engilish',
+        value: 'English',
+    },
+    {
+        label: 'Hindi',
+        value: 'Hindi',
+    },
+    {
+        label: 'Sanskrit',
+        value: 'Sanskrit',
+    },
+    {
+        label: 'All',
+        value: 'All',
+    },
+];
+let ExperienceSubStdBoardData: Partial<SubStdBoard>[] = [
+    {
+        subjectId: 1,
+        standardId: 1,
+        boardId: 1,
+        experience_id: 1,
+    },
+    {
+        subjectId: 2,
+        standardId: 1,
+        boardId: 1,
+        experience_id: 1,
+    },
+    {
+        subjectId: 3,
+        standardId: 2,
+        boardId: 1,
+        experience_id: 1,
+    },
+];
+let ExperienceData: Partial<Experience>[] = [
+    {
+        title: 'adipisci voluptas autem',
+        employerName: 'animi aut quo',
+        start: '2015-01-01',
+        end: '2016-12-30',
+        description:
+            'At vel cum velit. Debitis soluta sunt. Porro cum aut eum quia temporibus. Voluptas quia placeat adipisci est saepe dolorem eum rerum dolorem.',
+        type: EmployerTypeEnum.School,
+        teacherId: 1,
+    },
+];
