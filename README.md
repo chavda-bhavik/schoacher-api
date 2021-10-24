@@ -21,6 +21,9 @@
   
   <dt>☁️ File Upload & Storing</dt>
   <dd><a href="apollographql.com/" target="_blank">apollographql</a>, <a href="cloudinary.com/" target="_blank">cloudinary</a></dd>
+  
+  <dt>☑️ Tests</dt>
+  <dd><a href="https://jestjs.io/" target="_blank">jest</a>, <a href="https://www.npmjs.com/package/apollo-server-integration-testing" target="_blank">apollo-integration-testing</a></dd>
 </dl>
 
 ## ✨ Features
