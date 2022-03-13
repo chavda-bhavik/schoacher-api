@@ -47,6 +47,7 @@
 - [JWT](https://jwt.io) with cookies for Authentication
 - [Yup](https://github.com/jquense/yup) for Schema validation
 - [Cloudinary](https://cloudinary.com) for storing documents
+- [bcryptjs](https://www.npmjs.com/package/bcryptjs) to encrypt password
 - [JestJS](https://jestjs.io), [apollo-integration-testing](https://www.npmjs.com/package/apollo-server-integration-testing) to write unit tests
 
 ------------
