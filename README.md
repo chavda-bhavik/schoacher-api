@@ -1,56 +1,52 @@
-<h1 align="center">Schoacher API</h1>
+<div align="center">
+  <h2>Schoacher (API)</h2>
 
-> API to handle teacher and employer information and authentication
-
-## 🤖 Things used for building API
-<dl>
-  <dt>💹 Graphql Server using expressjs and apollo</dt>
-  <dd><a href="https://www.apollographql.com/" target="_blank">apollographql</a>, <a href="https://expressjs.com/" target="_blank">expressjs</a></dd>
+  ### Online portal where employer & teacher can manage their profile, <br /> employer can add jobs and teachers can apply at jobs
   
-  <dt>🛡️ Graphql</dt>
-  <dd><a href="https://typegraphql.com/" target="_blank">type-graphql</a></dd>
+  #### Teacher Portal
+  ![Schoacher-Teacher-V1](https://user-images.githubusercontent.com/50201755/158044576-bb664a5b-c4cf-46db-a811-c76cc9b9a342.gif)
   
-  <dt>🗃️ ORM</dt>
-  <dd><a href="https://typeorm.io/#/" target="_blank">Typeorm</a></dd>
-  
-  <dt>🔐 Authentication</dt>
-  <dd><a href="https://jwt.io" target="_blank">jsonwebtokens</a> with secure cookies</dd>
-  
-  <dt>🧐 Validation</dt>
-  <dd><a href="https://github.com/jquense/yup" target="_blank">Yup</a></dd>
-  
-  <dt>☁️ File Upload & Storing</dt>
-  <dd><a href="apollographql.com/" target="_blank">apollographql</a>, <a href="cloudinary.com/" target="_blank">cloudinary</a></dd>
-  
-  <dt>☑️ Tests</dt>
-  <dd><a href="https://jestjs.io/" target="_blank">jest</a>, <a href="https://www.npmjs.com/package/apollo-server-integration-testing" target="_blank">apollo-integration-testing</a></dd>
-</dl>
+  #### Employer Portal
+  ![Schoacher-School-V1](https://user-images.githubusercontent.com/50201755/158044579-f0b4d1ee-c231-4622-8908-2044521efb47.gif)
 
-## ✨ Features
-* App gets develop in Typescript and run in Javascript
-* Secure authentication and authorization using **jsonwebtoken** and **CORS**
-* Abstraction of common used database functions
-* Auto validation for data when saving entity
-* Error management by seperating validation errors and other errors
-* Code formatting and linting with **eslint** and **prettier**
+  <a href="https://schoacher.vercel.app" target="_blank">Live demo</a> | <a href="https://github.com/chavda-bhavik/schoacher" target="_blank">Frontend</a>
+</div>
 
 
-## 📩 Install
-```sh
-yarn install
-```
+### Running Locally
 
-## 💨 Run
-```sh
-yarn watch
-yarn dev
-```
+### Setup
+* Create postgress database named **schoacher** and **schoacher-test**
+* Update database credentials in **ormconfig.js**
 
-## 😎 Author
+### Steps
+- `git clone https://github.com/chavda-bhavik/schoacher-api.git`
+- `yarn` (after navigating inside the directory)
+- `yarn watch && yarn dev`
 
-👤 **Bhavik Chavda**
+----
 
-* Website: [bhavikchavda.com](http://www.bhavikchavda.com)
-* Twitter: [@chavdabhavik7](https://twitter.com/chavdabhavik7)
-* Github: [@chavda-bhavik](https://github.com/chavda-bhavik)
-* LinkedIn: [@chavdabhavik7](https://linkedin.com/in/chavdabhavik7)
+## About Schoacher-API
+
+### Features
+- Built on Typescript
+- Tests written using **jest**
+- Graphql Implementation with Apollo Server
+- `Automatic data validation using Yup`
+- File Uploading to [Cloudinary](https://cloudinary.com)
+- Abstracted Database functions to easy the Development
+- Linting and formatting with **eslint** and **prettier**
+
+## Problems Face and Solved
+- Providing CORS enabled secure authetication using cookie was challenging
+
+## Technologies 🤖
+- [apollographql](https://www.apollographql.com/), [expressjs](https://expressjs.com/) to build GraphQL server
+- [type-graphql](https://typegraphql.com) to Build Schema and operations from Classes
+- [typeorm](https://typeorm.io/#/) to enable lightweight ORM
+- [JWT](https://jwt.io) with cookies for Authentication
+- [Yup](https://github.com/jquense/yup) for Schema validation
+- [Cloudinary](https://cloudinary.com) for storing documents
+- [JestJS](https://jestjs.io), [apollo-integration-testing](https://www.npmjs.com/package/apollo-server-integration-testing) to write unit tests
+
+------------
